@@ -5,6 +5,7 @@ curl -X POST "https://www.yasupada.com/mobiletrip/api.php?action=register" -d "u
 
 curl -X POST "http://www.yasupada.com/mobiletrip/api.php?action=update_profile_info" -H "Content-Type: application/x-www-form-urlencoded" -d "user_id=1" -d "first_name=John" -d "last_name=Doe" -d "date_of_birth=1990-01-01" -d "address=123 Main St, Anytown, USA"
 
+curl -X POST https://www.yasupada.com/mobiletrip/api.php?action=update_profile_image -F "user_id=4" -F "image=@test.png"
 
 
 
