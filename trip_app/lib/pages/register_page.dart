@@ -1,11 +1,13 @@
-// login_page.dart
+// register_page.dart
 import 'package:flutter/material.dart';
-import 'register_page.dart';
 
-class LoginPage extends StatelessWidget {
+class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Register'),
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
@@ -33,6 +35,18 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               
+              // Email Field
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  prefixIcon: Icon(Icons.email),
+                ),
+              ),
+              SizedBox(height: 20),
+              
               // Password Field
               TextField(
                 decoration: InputDecoration(
@@ -46,10 +60,23 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               
-              // Login Button
+              // Confirm Password Field
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  prefixIcon: Icon(Icons.lock_outline),
+                ),
+                obscureText: true,
+              ),
+              SizedBox(height: 20),
+              
+              // Register Button
               ElevatedButton(
                 onPressed: () {
-                  // Handle login
+                  // Handle registration
                 },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
@@ -57,19 +84,7 @@ class LoginPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-                child: Text('Login'),
-              ),
-              SizedBox(height: 20),
-              
-              // Register Button
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => RegisterPage()),
-                  );
-                },
-                child: Text('Don’t have an account? Register here'),
+                child: Text('Register'),
               ),
             ],
           ),
