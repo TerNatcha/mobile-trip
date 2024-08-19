@@ -10,9 +10,14 @@ class User {
     }
 
     public function register($username, $email, $password) {
+    try {
+        // Begin transaction
+        $this->conn->beginTransaction();
+
+        // Insert into users table
         $query = "INSERT INTO " . $this->table_name . " (username, email, password) VALUES (:username, :email, :password)";
         $stmt = $this->conn->prepare($query);
-        
+
         // Hash the password
         $password_hash = password_hash($password, PASSWORD_BCRYPT);
 
@@ -21,11 +26,37 @@ class User {
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password', $password_hash);
 
-        if ($stmt->execute()) {
-            return true;
+        // Execute the statement
+        if (!$stmt->execute()) {
+            throw new Exception("Failed to register user.");
         }
+
+        // Get the last inserted user ID
+        $user_id = $this->conn->lastInsertId();
+
+        // Insert into user_profile table
+        $profile_query = "INSERT INTO user_profile (user_id) VALUES (:user_id)";
+        $profile_stmt = $this->conn->prepare($profile_query);
+
+        // Bind parameters
+        $profile_stmt->bindParam(':user_id', $user_id);
+
+        // Execute the statement
+        if (!$profile_stmt->execute()) {
+            throw new Exception("Failed to create user profile.");
+        }
+
+        // Commit transaction
+        $this->conn->commit();
+        return true;
+
+    } catch (Exception $e) {
+        // Rollback transaction
+        $this->conn->rollBack();
         return false;
     }
+}
+
 
     public function login($username, $password) {
         $query = "SELECT id, username, password FROM " . $this->table_name . " WHERE username = :username";
@@ -38,6 +69,21 @@ class User {
             return $row['id']; // Return user ID
         }
         return false;
+    }
+	
+	// Get User Information by ID
+    public function getUserInfo($user_id) {
+        $query = "SELECT id, username, email, profile_image, created_at FROM " . $this->table_name . " WHERE id = :user_id LIMIT 0,1";
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } else {
+            return null;
+        }
     }
 
     // Update User Profile Information
