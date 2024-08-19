@@ -1,13 +1,69 @@
-// register_page.dart
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'login_page.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  Future<void> _register() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final username = _usernameController.text;
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'https://www.yasupada.com/mobiletrip/api.php?action=register'),
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode({
+          'username': username,
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 &&
+          responseData['message'] == 'User registered successfully.') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      } else {
+        setState(() {
+          _errorMessage = responseData['message'];
+        });
+      }
+    } catch (error) {
+      setState(() {
+        _errorMessage = 'An error occurred. Please try again.';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Register'),
-      ),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
@@ -19,12 +75,14 @@ class RegisterPage extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 40.0),
                 child: CircleAvatar(
                   radius: 50.0,
-                  backgroundImage: AssetImage('assets/logo.png'), // Your logo here
+                  backgroundImage:
+                      AssetImage('assets/images/logo.png'), // Your logo here
                 ),
               ),
-              
+
               // Username Field
               TextField(
+                controller: _usernameController,
                 decoration: InputDecoration(
                   labelText: 'Username',
                   border: OutlineInputBorder(
@@ -34,9 +92,10 @@ class RegisterPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              
+
               // Email Field
               TextField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(
@@ -44,11 +103,13 @@ class RegisterPage extends StatelessWidget {
                   ),
                   prefixIcon: Icon(Icons.email),
                 ),
+                keyboardType: TextInputType.emailAddress,
               ),
               SizedBox(height: 20),
-              
+
               // Password Field
               TextField(
+                controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(
@@ -59,32 +120,40 @@ class RegisterPage extends StatelessWidget {
                 obscureText: true,
               ),
               SizedBox(height: 20),
-              
-              // Confirm Password Field
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Confirm Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+
+              // Error Message
+              if (_errorMessage != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(color: Colors.red),
                   ),
-                  prefixIcon: Icon(Icons.lock_outline),
                 ),
-                obscureText: true,
-              ),
-              SizedBox(height: 20),
-              
+
               // Register Button
               ElevatedButton(
-                onPressed: () {
-                  // Handle registration
-                },
+                onPressed: _isLoading ? null : _register,
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-                child: Text('Register'),
+                child:
+                    _isLoading ? CircularProgressIndicator() : Text('Register'),
+              ),
+              SizedBox(height: 20),
+
+              // Login Button
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
+                child: Text('Already have an account? Login here'),
               ),
             ],
           ),
