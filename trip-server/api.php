@@ -136,6 +136,47 @@ switch ($action) {
             echo json_encode(["message" => "Failed to delete event."]);
         }
         break;
+	// Update Trip Expense
+    case 'update_expense':
+        $trip = new Trip($db);
+        $trip_id = $_POST['trip_id'];
+        $expense_id = $_POST['expense_id'];
+        $amount = $_POST['amount'];
+        $description = $_POST['description'];
+
+        if ($trip->updateExpense($trip_id, $expense_id, $amount, $description)) {
+            echo json_encode(["message" => "Expense updated successfully."]);
+        } else {
+            echo json_encode(["message" => "Failed to update expense."]);
+        }
+        break;
+
+    // Update User Profile Information
+    case 'update_profile':
+        $user = new User($db);
+        $user_id = $_POST['user_id'];
+        $username = $_POST['username'];
+        $email = $_POST['email'];
+
+        if ($user->updateProfile($user_id, $username, $email)) {
+            echo json_encode(["message" => "Profile updated successfully."]);
+        } else {
+            echo json_encode(["message" => "Failed to update profile."]);
+        }
+        break;
+
+    // Update User Profile Image
+    case 'update_profile_image':
+        $user = new User($db);
+        $user_id = $_POST['user_id'];
+        $image_path = $_POST['image_path'];
+
+        if ($user->updateProfileImage($user_id, $image_path)) {
+            echo json_encode(["message" => "Profile image updated successfully."]);
+        } else {
+            echo json_encode(["message" => "Failed to update profile image."]);
+        }
+        break;
 
     default:
         echo json_encode(["message" => "Invalid action."]);
