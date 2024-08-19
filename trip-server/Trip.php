@@ -5,6 +5,8 @@ class Trip {
     private $conn;
     private $table_name = "trips";
 	
+    private $expenses_table = "trip_expenses"; // Table for trip expenses
+	
     private $events_table = "trip_events"; // Table for trip events
 
     public function __construct($db) {
@@ -120,5 +122,24 @@ public function editTrip($trip_id, $name, $destination, $start_date, $end_date) 
         }
         return false;
     }
+	
+	// Update Expense for a Trip
+    public function updateExpense($trip_id, $expense_id, $amount, $description) {
+        $query = "UPDATE " . $this->expenses_table . " 
+                  SET amount = :amount, description = :description 
+                  WHERE id = :expense_id AND trip_id = :trip_id";
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(':trip_id', $trip_id);
+        $stmt->bindParam(':expense_id', $expense_id);
+        $stmt->bindParam(':amount', $amount);
+        $stmt->bindParam(':description', $description);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+	
 }
 ?>
