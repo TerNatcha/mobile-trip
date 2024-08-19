@@ -3,7 +3,8 @@
 
 curl -X POST "https://www.yasupada.com/mobiletrip/api.php?action=register" -d "username=testuser" -d "email=testuser@example.com" -d "password=password123"
 
-curl -X POST "https://www.yasupada.com/mobiletrip/api.php?action=update_profile" -d "user_id=1" -d "username=updateduser" -d "email=updateduser@example.com"
+curl -X POST "http://www.yasupada.com/mobiletrip/api.php?action=update_profile_info" -H "Content-Type: application/x-www-form-urlencoded" -d "user_id=1" -d "first_name=John" -d "last_name=Doe" -d "date_of_birth=1990-01-01" -d "address=123 Main St, Anytown, USA"
+
 
 
 
