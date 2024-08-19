@@ -60,6 +60,83 @@ switch ($action) {
         echo json_encode($trips);
         break;
 
+    case 'edit_trip':
+        $trip = new Trip($db);
+        $trip_id = $_POST['trip_id'];
+        $name = $_POST['name'];
+        $destination = $_POST['destination'];
+        $start_date = $_POST['start_date'];
+        $end_date = $_POST['end_date'];
+
+        if ($trip->editTrip($trip_id, $name, $destination, $start_date, $end_date)) {
+            echo json_encode(["message" => "Trip updated successfully."]);
+        } else {
+            echo json_encode(["message" => "Failed to update trip."]);
+        }
+        break;
+
+    case 'delete_trip':
+        $trip = new Trip($db);
+        $trip_id = $_POST['trip_id'];
+
+        if ($trip->deleteTrip($trip_id)) {
+            echo json_encode(["message" => "Trip deleted successfully."]);
+        } else {
+            echo json_encode(["message" => "Failed to delete trip."]);
+        }
+        break;
+
+    case 'close_trip':
+        $trip = new Trip($db);
+        $trip_id = $_POST['trip_id'];
+
+        if ($trip->closeTrip($trip_id)) {
+            echo json_encode(["message" => "Trip closed successfully."]);
+        } else {
+            echo json_encode(["message" => "Failed to close trip."]);
+        }
+        break;
+
+    // Trip Event Management
+    case 'create_event':
+        $trip = new Trip($db);
+        $trip_id = $_POST['trip_id'];
+        $event_name = $_POST['event_name'];
+        $description = $_POST['description'];
+        $event_date = $_POST['event_date'];
+
+        if ($trip->createEvent($trip_id, $event_name, $description, $event_date)) {
+            echo json_encode(["message" => "Event created successfully."]);
+        } else {
+            echo json_encode(["message" => "Failed to create event."]);
+        }
+        break;
+
+    case 'update_event':
+        $trip = new Trip($db);
+        $event_id = $_POST['event_id'];
+        $event_name = $_POST['event_name'];
+        $description = $_POST['description'];
+        $event_date = $_POST['event_date'];
+
+        if ($trip->updateEvent($event_id, $event_name, $description, $event_date)) {
+            echo json_encode(["message" => "Event updated successfully."]);
+        } else {
+            echo json_encode(["message" => "Failed to update event."]);
+        }
+        break;
+
+    case 'delete_event':
+        $trip = new Trip($db);
+        $event_id = $_POST['event_id'];
+
+        if ($trip->deleteEvent($event_id)) {
+            echo json_encode(["message" => "Event deleted successfully."]);
+        } else {
+            echo json_encode(["message" => "Failed to delete event."]);
+        }
+        break;
+
     default:
         echo json_encode(["message" => "Invalid action."]);
         break;
