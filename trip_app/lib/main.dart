@@ -33,16 +33,15 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    _checkLoginStatus(); // Check login status when the splash screen loads
   }
 
-  // Check if the user is logged in or not
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString('username');
+    final username = prefs.getString('username'); // Check if a username is saved in SharedPreferences
 
     if (username != null) {
-      // User is logged in, navigate to TabBasePage
+      // User is already logged in, navigate to TabBasePage
       Navigator.pushReplacementNamed(context, '/tabBasePage');
     } else {
       // User is not logged in, navigate to LoginPage
@@ -54,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(), // Show a loading indicator while checking the login status
       ),
     );
   }
