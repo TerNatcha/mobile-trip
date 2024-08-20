@@ -39,11 +39,12 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200 && responseData['message'] == 'Login successful.') {
         // Save user information
         final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_id', responseData['user_id']);
         await prefs.setString('username', username);
-        await prefs.setString('token', responseData['token']); // Assuming the response contains a token
+        // await prefs.setString('token', responseData['token']); // Assuming the response contains a token
 
         // Navigate to the next page or save token and navigate
-        Navigator.pushReplacementNamed(context, '/home'); // Replace with your home route
+        Navigator.pushReplacementNamed(context, '/tabBasePage');  
       } else {
         setState(() {
           _errorMessage = responseData['message'];
