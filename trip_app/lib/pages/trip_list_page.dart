@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import 'dart:convert';
 import 'trip_info_page.dart';
+import 'create_trip_page.dart'; // Import CreateTripPage
 
 class TripListPage extends StatefulWidget {
   @override
@@ -41,7 +42,8 @@ class _TripListPageState extends State<TripListPage> {
       }
 
       final response = await http.get(
-        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$userId'),
+        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trip'),
+        //Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$userId'),
       );
 
       if (response.statusCode == 200) {
@@ -105,7 +107,7 @@ class _TripListPageState extends State<TripListPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TripInfoPage(),
+              builder: (context) => CreateTripPage(), // Navigate to CreateTripPage
             ),
           );
         },

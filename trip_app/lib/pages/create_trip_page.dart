@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // For formatting dates
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import 'dart:convert';
 
 class CreateTripPage extends StatefulWidget {
@@ -53,12 +54,24 @@ class _CreateTripPageState extends State<CreateTripPage> {
 
   Future<void> _saveTrip() async {
     if (_formKey.currentState!.validate()) {
+      // Retrieve the user ID from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      int? userId = prefs.getInt('user_id');
+
+      // If userId is null, show an error or handle the case
+      if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User ID not found. Please log in again.')),
+        );
+        return;
+      }
+
       final action = isEditing ? 'edit_trip' : 'create_trip';
       final response = await http.post(
         Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=$action'),
         body: {
-          'trip_id': widget.tripId.toString(),
-          'user_id': '1', // Replace with the actual user ID
+          'trip_id': widget.tripId?.toString() ?? '',
+          'user_id': userId.toString(), // Use user_id from SharedPreferences
           'name': _tripNameController.text,
           'destination': _destinationController.text,
           'start_date': _startDateController.text,

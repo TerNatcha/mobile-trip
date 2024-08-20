@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 import 'dart:convert';
 
 class CalendarPage extends StatefulWidget {
@@ -15,15 +16,26 @@ class _CalendarPageState extends State<CalendarPage> {
   List<Map<String, dynamic>> _trips = [];
   List<Map<String, dynamic>> _filteredTrips = [];
   String _filter = 'All Trips';
+  String? _userId; // Store the user ID
 
   @override
   void initState() {
     super.initState();
-    _fetchTrips();
+    _loadUserId(); // Load user ID from SharedPreferences
+  }
+
+  Future<void> _loadUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userId = prefs.getString('user_id'); // Retrieve the user ID
+      _fetchTrips(); // Fetch trips after loading user ID
+    });
   }
 
   Future<void> _fetchTrips() async {
-    final response = await http.get(Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=YOUR_USER_ID'));
+    if (_userId == null) return; // Ensure user ID is not null
+
+    final response = await http.get(Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$_userId'));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -39,8 +51,6 @@ class _CalendarPageState extends State<CalendarPage> {
     setState(() {
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
-
-      // Show trip info for the selected day
       _showTripsForDay(selectedDay);
     });
   }
@@ -97,11 +107,9 @@ class _CalendarPageState extends State<CalendarPage> {
       if (filter == 'All Trips') {
         _filteredTrips = _trips;
       } else if (filter == 'My Own Trips') {
-        // Replace with actual condition to filter the user's own trips
-        _filteredTrips = _trips.where((trip) => trip['user_id'] == 'YOUR_USER_ID').toList();
+        _filteredTrips = _trips.where((trip) => trip['user_id'] == _userId).toList();
       } else if (filter == 'My Join Trips') {
-        // Replace with actual condition to filter the trips the user has joined
-        _filteredTrips = _trips.where((trip) => trip['joined_users'].contains('YOUR_USER_ID')).toList();
+        _filteredTrips = _trips.where((trip) => trip['joined_users'].contains(_userId)).toList();
       }
     });
   }
