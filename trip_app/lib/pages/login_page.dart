@@ -43,6 +43,14 @@ class _LoginPageState extends State<LoginPage> {
         await prefs.setString('username', username);
         // await prefs.setString('token', responseData['token']); // Assuming the response contains a token
 
+// Show success SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(responseData['message']),
+            backgroundColor: Colors.green,
+          ),
+        );
+        
         // Navigate to the next page or save token and navigate
         Navigator.pushReplacementNamed(context, '/tabBasePage');  
       } else {
