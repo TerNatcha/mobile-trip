@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login_page.dart';
-import 'tab_base_page.dart';
+import 'pages/login_page.dart';
+import 'pages/tab_base_page.dart';
 
 void main() {
   runApp(MyApp());
