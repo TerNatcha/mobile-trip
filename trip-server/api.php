@@ -15,10 +15,32 @@ $action = $_GET['action'] ?? '';
 switch ($action) {
     case 'register':
         $user = new User($db);
+        
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+
+        // Retrieve 'username' and 'password' from the data
+        $username = $data['username'] ?? '';
+        $email = $data['email'] ?? '';
+        $password = $data['password'] ?? '';
+    
+    
+    
+        /**
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-
+        */
+        
         if ($user->register($username, $email, $password)) {
             echo json_encode(["message" => "User registered successfully."]);
         } else {
@@ -28,9 +50,28 @@ switch ($action) {
 
     case 'login':
         $user = new User($db);
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        
+        
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
 
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+
+        // Retrieve 'username' and 'password' from the data
+        $username = $data['username'] ?? '';
+        $password = $data['password'] ?? '';
+        
+        
+        //$username = $_POST['username'];
+        //$password = $_POST['password'];
+        //print_r($_POST);
         $user_id = $user->login($username, $password);
         if ($user_id) {
             echo json_encode(["message" => "Login successful.", "user_id" => $user_id]);

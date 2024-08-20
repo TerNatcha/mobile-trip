@@ -36,7 +36,7 @@ class User {
         $user_id = $this->conn->lastInsertId();
 
         // Insert into user_profile table
-        $profile_query = "INSERT INTO " . $this->user_profile . " (user_id) VALUES (:user_id)";
+        $profile_query = "INSERT INTO " . $this->profile_table . " (user_id) VALUES (:user_id)";
         $profile_stmt = $this->conn->prepare($profile_query);
 
         // Bind parameters
