@@ -29,18 +29,10 @@ switch ($action) {
         }
 
         // Retrieve 'username' and 'password' from the data
-        $username = $data['username'] ?? '';
-        $email = $data['email'] ?? '';
-        $password = $data['password'] ?? '';
+        $username = $data['username'] ;
+        $email = $data['email'] ;
+        $password = $data['password'] ;
     
-    
-    
-        /**
-        $username = $_POST['username'];
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        */
-        
         if ($user->register($username, $email, $password)) {
             echo json_encode(["message" => "User registered successfully."]);
         } else {
@@ -50,7 +42,6 @@ switch ($action) {
 
     case 'login':
         $user = new User($db);
-        
         
         // Get the raw POST data
         $rawData = file_get_contents('php://input');
@@ -65,13 +56,9 @@ switch ($action) {
         }
 
         // Retrieve 'username' and 'password' from the data
-        $username = $data['username'] ?? '';
-        $password = $data['password'] ?? '';
-        
-        
-        //$username = $_POST['username'];
-        //$password = $_POST['password'];
-        //print_r($_POST);
+        $username = $data['username'] ;
+        $password = $data['password']  ;
+         
         $user_id = $user->login($username, $password);
         if ($user_id) {
             echo json_encode(["message" => "Login successful.", "user_id" => $user_id]);
@@ -82,11 +69,24 @@ switch ($action) {
 
     case 'create_trip':
         $trip = new Trip($db);
-        $user_id = $_POST['user_id'];
-        $name = $_POST['name'];
-        $destination = $_POST['destination'];
-        $start_date = $_POST['start_date'];
-        $end_date = $_POST['end_date'];
+        
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+ 
+        $user_id = $data['user_id'];
+        $name = $data['name'];
+        $destination = $data['destination'];
+        $start_date = $data['start_date'];
+        $end_date = $data['end_date'];
 
         if ($trip->createTrip($user_id, $name, $destination, $start_date, $end_date)) {
             echo json_encode(["message" => "Trip created successfully."]);
@@ -103,14 +103,26 @@ switch ($action) {
         break;
 		
 	
-
     case 'edit_trip':
         $trip = new Trip($db);
-        $trip_id = $_POST['trip_id'];
-        $name = $_POST['name'];
-        $destination = $_POST['destination'];
-        $start_date = $_POST['start_date'];
-        $end_date = $_POST['end_date'];
+        
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+        
+        $trip_id = $data['trip_id'];
+        $name = $data['name'];
+        $destination = $data['destination'];
+        $start_date = $data['start_date'];
+        $end_date = $data['end_date'];
 
         if ($trip->editTrip($trip_id, $name, $destination, $start_date, $end_date)) {
             echo json_encode(["message" => "Trip updated successfully."]);
@@ -121,7 +133,20 @@ switch ($action) {
 
     case 'delete_trip':
         $trip = new Trip($db);
-        $trip_id = $_POST['trip_id'];
+        
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+        
+        $trip_id = $data['trip_id'];
 
         if ($trip->deleteTrip($trip_id)) {
             echo json_encode(["message" => "Trip deleted successfully."]);
@@ -132,7 +157,19 @@ switch ($action) {
 
     case 'close_trip':
         $trip = new Trip($db);
-        $trip_id = $_POST['trip_id'];
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+        
+        $trip_id = $data['trip_id'];
 
         if ($trip->closeTrip($trip_id)) {
             echo json_encode(["message" => "Trip closed successfully."]);
@@ -144,10 +181,24 @@ switch ($action) {
     // Trip Event Management
     case 'create_event':
         $trip = new Trip($db);
-        $trip_id = $_POST['trip_id'];
-        $event_name = $_POST['event_name'];
-        $description = $_POST['description'];
-        $event_date = $_POST['event_date'];
+        
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+        
+        $trip_id = $data['trip_id'];
+        
+        $event_name = $data['event_name'];
+        $description = $data['description'];
+        $event_date = $data['event_date'];
 
         if ($trip->createEvent($trip_id, $event_name, $description, $event_date)) {
             echo json_encode(["message" => "Event created successfully."]);
@@ -158,10 +209,24 @@ switch ($action) {
 
     case 'update_event':
         $trip = new Trip($db);
-        $event_id = $_POST['event_id'];
-        $event_name = $_POST['event_name'];
-        $description = $_POST['description'];
-        $event_date = $_POST['event_date'];
+        
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+         
+        
+        $event_id = $data['event_id'];
+        $event_name = $data['event_name'];
+        $description = $data['description'];
+        $event_date = $data['event_date'];
 
         if ($trip->updateEvent($event_id, $event_name, $description, $event_date)) {
             echo json_encode(["message" => "Event updated successfully."]);
@@ -172,7 +237,20 @@ switch ($action) {
 
     case 'delete_event':
         $trip = new Trip($db);
-        $event_id = $_POST['event_id'];
+        
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+        
+        $event_id = $data['event_id'];
 
         if ($trip->deleteEvent($event_id)) {
             echo json_encode(["message" => "Event deleted successfully."]);
@@ -183,10 +261,23 @@ switch ($action) {
 	// Update Trip Expense
     case 'update_expense':
         $trip = new Trip($db);
-        $trip_id = $_POST['trip_id'];
-        $expense_id = $_POST['expense_id'];
-        $amount = $_POST['amount'];
-        $description = $_POST['description'];
+        
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+        
+        $trip_id = $data['trip_id'];
+        $expense_id = $data['expense_id'];
+        $amount = $data['amount'];
+        $description = $data['description'];
 
         if ($trip->updateExpense($trip_id, $expense_id, $amount, $description)) {
             echo json_encode(["message" => "Expense updated successfully."]);
@@ -198,9 +289,22 @@ switch ($action) {
     // Update User Profile Information
     case 'update_user':
         $user = new User($db);
-        $user_id = $_POST['user_id'];
-        $username = $_POST['username'];
-        $email = $_POST['email'];
+        
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+        
+        $user_id = $data['user_id'];
+        $username = $data['username'];
+        $email = $data['email'];
 
         if ($user->updateProfile($user_id, $username, $email)) {
             echo json_encode(["message" => "Profile updated successfully."]);
@@ -266,11 +370,24 @@ switch ($action) {
     // Update user profile information
     case 'update_profile_info':
         $user = new User($db);
-        $user_id = $_POST['user_id'];
-        $first_name = $_POST['first_name'];
-        $last_name = $_POST['last_name']; 
-		$phone = $_POST['phone'];
-        $address = $_POST['address'];
+         
+        // Get the raw POST data
+        $rawData = file_get_contents('php://input');
+
+        // Decode the JSON data
+        $data = json_decode($rawData, true);
+
+        // Check if the decoding was successful
+        if ($data === null) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+            exit;
+        }
+        
+        $user_id = $data['user_id'];
+        $first_name = $data['first_name'];
+        $last_name = $data['last_name']; 
+		$phone = $data['phone'];
+        $address = $data['address'];
 
         if ($user->updateProfileInfo($user_id, $first_name, $last_name, $phone, $address)) {
             echo json_encode(["message" => "Profile updated successfully."]);
