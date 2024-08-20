@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'register_page.dart';
 
@@ -14,7 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  Future<void> _login() async {
+   Future<void> _login() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -35,11 +36,14 @@ class _LoginPageState extends State<LoginPage> {
 
       final responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 200 &&
-          responseData['message'] == 'Login successful.') {
+      if (response.statusCode == 200 && responseData['message'] == 'Login successful.') {
+        // Save user information
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('username', username);
+        await prefs.setString('token', responseData['token']); // Assuming the response contains a token
+
         // Navigate to the next page or save token and navigate
-        Navigator.pushReplacementNamed(
-            context, '/home'); // Replace with your home route
+        Navigator.pushReplacementNamed(context, '/home'); // Replace with your home route
       } else {
         setState(() {
           _errorMessage = responseData['message'];
