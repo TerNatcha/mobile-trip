@@ -3,8 +3,30 @@ import 'trip_info_page.dart';
 import 'trip_list_page.dart';
 import 'calendar_page.dart';
 import 'my_person_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class TabBasePage extends StatelessWidget {
+class TabBasePage extends StatefulWidget {
+  @override
+  _TabBasePageState createState() => _TabBasePageState();
+}
+
+class _TabBasePageState extends State<TabBasePage> {
+  Future<Map<String, String?>>? _userInfoFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _userInfoFuture = getUserInfo();
+  }
+
+  Future<Map<String, String?>> getUserInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    return {
+      'username': prefs.getString('username'),
+      'token': prefs.getString('token'),
+    };
+  }
+  
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
