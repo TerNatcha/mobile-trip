@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import 'dart:convert';
 import 'trip_info_page.dart';
 
@@ -19,22 +20,49 @@ class _TripListPageState extends State<TripListPage> {
   }
 
   Future<void> _fetchTrips() async {
-    int userId = 1; // Replace with actual user ID
-    final response = await http.get(
-      Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$userId'),
-    );
+    setState(() {
+      isLoading = true; // Show loading indicator while fetching trips
+    });
 
-    if (response.statusCode == 200) {
-      setState(() {
-        trips = json.decode(response.body);
-        isLoading = false;
-      });
-    } else {
+    try {
+      // Retrieve the user ID from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      int? userId = prefs.getInt('user_id');
+
+      // If userId is null, show an error or handle the case
+      if (userId == null) {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User ID not found. Please log in again.')),
+        );
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$userId'),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          trips = json.decode(response.body);
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load trips')),
+        );
+      }
+    } catch (e) {
       setState(() {
         isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load trips')),
+        SnackBar(content: Text('An error occurred while fetching trips')),
       );
     }
   }
