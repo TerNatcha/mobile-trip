@@ -12,3 +12,10 @@ curl -X POST https://www.yasupada.com/mobiletrip/api.php?action=update_profile_i
 curl -X POST "https://www.yasupada.com/mobiletrip/api.php?action=login" -d "username=testuser" -d "password=password123"
 
 curl -X POST "https://www.yasupada.com/mobiletrip/api.php?action=create_trip" -d "user_id=1" -d "name=Trip to Paris" -d "destination=Paris" -d "start_date=2024-09-01" -d "end_date=2024-09-10"
+
+
+
+https://www.yasupada.com/phpMyAdmin/index.php?route=/sql&pos=0&db=yasupada_trip&table=user_profiles
+
+yasupada_trip
+trip123456
