@@ -26,24 +26,9 @@ class _TripListPageState extends State<TripListPage> {
     });
 
     try {
-      // Retrieve the user ID from SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      int? userId = prefs.getInt('user_id');
-
-      // If userId is null, show an error or handle the case
-      if (userId == null) {
-        setState(() {
-          isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('User ID not found. Please log in again.')),
-        );
-        return;
-      }
-
+      
       final response = await http.get(
-        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trip'),
-        //Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$userId'),
+        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trips'),
       );
 
       if (response.statusCode == 200) {
@@ -72,7 +57,22 @@ class _TripListPageState extends State<TripListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('My Trips')),
+      appBar: AppBar(
+        title: Text('My Trips'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateTripPage(isOwner: true), // Adjust based on user permissions
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : trips.isEmpty
@@ -101,18 +101,7 @@ class _TripListPageState extends State<TripListPage> {
                       },
                     );
                   },
-                ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CreateTripPage(), // Navigate to CreateTripPage
-            ),
-          );
-        },
-        child: Icon(Icons.add),
-      ),
+                ), 
     );
   }
 }
