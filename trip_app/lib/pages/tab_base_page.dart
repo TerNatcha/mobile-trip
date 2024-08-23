@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'trip_info_page.dart';
 import 'trip_list_page.dart';
 import 'group_list_page.dart';
+
 import 'calendar_page.dart';
 import 'my_person_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,7 +65,7 @@ class _TabBasePageState extends State<TabBasePage> {
         body: TabBarView(
           children: [
             TripListPage(),
-            GroupsListPage(),
+            GroupListPage(),
             CalendarPage(),
             MyPersonPage(),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'chat_room_page.dart';
 
 class GroupListPage extends StatefulWidget {
   final bool isOwner;
