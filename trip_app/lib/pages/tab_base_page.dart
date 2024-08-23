@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'trip_info_page.dart';
 import 'trip_list_page.dart';
+import 'group_list_page.dart';
 import 'calendar_page.dart';
 import 'my_person_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,6 +47,10 @@ class _TabBasePageState extends State<TabBasePage> {
                 text: 'Trips',
               ),
               Tab(
+                icon: Icon(Icons.list_alt),
+                text: 'Groups',
+              ),
+              Tab(
                 icon: Icon(Icons.calendar_today),
                 text: 'Calendar',
               ),
@@ -59,17 +64,12 @@ class _TabBasePageState extends State<TabBasePage> {
         body: TabBarView(
           children: [
             TripListPage(),
+            GroupsListPage(),
             CalendarPage(),
             MyPersonPage(),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Handle action when FAB is pressed, e.g., create a new trip
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Theme.of(context).primaryColor,
-        ),
+        
       ),
     );
   }
