@@ -15,7 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   String? _errorMessage;
 
-   Future<void> _login() async {
+  Future<void> _login() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -36,7 +36,8 @@ class _LoginPageState extends State<LoginPage> {
 
       final responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 200 && responseData['message'] == 'Login successful.') {
+      if (response.statusCode == 200 &&
+          responseData['message'] == 'Login successful.') {
         // Save user information
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('user_id', responseData['user_id']);
@@ -50,9 +51,9 @@ class _LoginPageState extends State<LoginPage> {
             backgroundColor: Colors.green,
           ),
         );
-        
+
         // Navigate to the next page or save token and navigate
-        Navigator.pushReplacementNamed(context, '/tabBasePage');  
+        Navigator.pushReplacementNamed(context, '/tabBasePage');
       } else {
         setState(() {
           _errorMessage = responseData['message'];
@@ -74,13 +75,13 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Logo or App Name
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 40.0),
                 child: CircleAvatar(
                   radius: 50.0,
                   backgroundImage:
@@ -96,10 +97,10 @@ class _LoginPageState extends State<LoginPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  prefixIcon: Icon(Icons.person),
+                  prefixIcon: const Icon(Icons.person),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Password Field
               TextField(
@@ -109,11 +110,11 @@ class _LoginPageState extends State<LoginPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  prefixIcon: Icon(Icons.lock),
+                  prefixIcon: const Icon(Icons.lock),
                 ),
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Error Message
               if (_errorMessage != null)
@@ -121,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: const EdgeInsets.only(bottom: 20.0),
                   child: Text(
                     _errorMessage!,
-                    style: TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red),
                   ),
                 ),
 
@@ -129,24 +130,28 @@ class _LoginPageState extends State<LoginPage> {
               ElevatedButton(
                 onPressed: _isLoading ? null : _login,
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-                child: _isLoading ? CircularProgressIndicator() : Text('Login'),
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Login'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Register Button
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const RegisterPage()),
                   );
                 },
-                child: Text('Don’t have an account? Register here'),
+                child: const Text('Don’t have an account? Register here'),
               ),
             ],
           ),

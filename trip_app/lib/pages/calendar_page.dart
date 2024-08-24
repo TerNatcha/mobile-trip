@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
+import 'package:table_calendar/table_calendar.dart';
+
 class CalendarPage extends StatefulWidget {
+  const CalendarPage({super.key});
+
   @override
   _CalendarPageState createState() => _CalendarPageState();
 }
@@ -35,7 +38,8 @@ class _CalendarPageState extends State<CalendarPage> {
   Future<void> _fetchTrips() async {
     if (_userId == null) return; // Ensure user ID is not null
 
-    final response = await http.get(Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$_userId'));
+    final response = await http.get(Uri.parse(
+        'https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$_userId'));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -59,7 +63,8 @@ class _CalendarPageState extends State<CalendarPage> {
     final tripsForDay = _filteredTrips.where((trip) {
       DateTime startDate = DateTime.parse(trip['start_date']);
       DateTime endDate = DateTime.parse(trip['end_date']);
-      return day.isAfter(startDate.subtract(Duration(days: 1))) && day.isBefore(endDate.add(Duration(days: 1)));
+      return day.isAfter(startDate.subtract(const Duration(days: 1))) &&
+          day.isBefore(endDate.add(const Duration(days: 1)));
     }).toList();
 
     if (tripsForDay.isNotEmpty) {
@@ -90,11 +95,12 @@ class _CalendarPageState extends State<CalendarPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(trip['name']),
-        content: Text('Destination: ${trip['destination']}\nStart Date: ${trip['start_date']}\nEnd Date: ${trip['end_date']}'),
+        content: Text(
+            'Destination: ${trip['destination']}\nStart Date: ${trip['start_date']}\nEnd Date: ${trip['end_date']}'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: const Text('Close'),
           ),
         ],
       ),
@@ -107,9 +113,12 @@ class _CalendarPageState extends State<CalendarPage> {
       if (filter == 'All Trips') {
         _filteredTrips = _trips;
       } else if (filter == 'My Own Trips') {
-        _filteredTrips = _trips.where((trip) => trip['user_id'] == _userId).toList();
+        _filteredTrips =
+            _trips.where((trip) => trip['user_id'] == _userId).toList();
       } else if (filter == 'My Join Trips') {
-        _filteredTrips = _trips.where((trip) => trip['joined_users'].contains(_userId)).toList();
+        _filteredTrips = _trips
+            .where((trip) => trip['joined_users'].contains(_userId))
+            .toList();
       }
     });
   }
@@ -118,16 +127,18 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Trip Calendar'),
+        title: const Text('Trip Calendar'),
         actions: [
           PopupMenuButton<String>(
             onSelected: _filterTrips,
             itemBuilder: (context) => [
-              PopupMenuItem(value: 'All Trips', child: Text('All Trips')),
-              PopupMenuItem(value: 'My Own Trips', child: Text('My Own Trips')),
-              PopupMenuItem(value: 'My Join Trips', child: Text('My Join Trips')),
+              const PopupMenuItem(value: 'All Trips', child: Text('All Trips')),
+              const PopupMenuItem(
+                  value: 'My Own Trips', child: Text('My Own Trips')),
+              const PopupMenuItem(
+                  value: 'My Join Trips', child: Text('My Join Trips')),
             ],
-            icon: Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list),
           ),
         ],
       ),
@@ -152,7 +163,9 @@ class _CalendarPageState extends State<CalendarPage> {
               return _filteredTrips.where((trip) {
                 DateTime startDate = DateTime.parse(trip['start_date']);
                 DateTime endDate = DateTime.parse(trip['end_date']);
-                return day.isAfter(startDate.subtract(Duration(days: 1))) && day.isBefore(endDate.add(Duration(days: 1)));
+                return day
+                        .isAfter(startDate.subtract(const Duration(days: 1))) &&
+                    day.isBefore(endDate.add(const Duration(days: 1)));
               }).toList();
             },
           ),

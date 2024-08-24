@@ -5,10 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPre
 import 'dart:convert';
 
 class CreateTripPage extends StatefulWidget {
-  final int? tripId; // If null, it means creating a new trip. If not, editing an existing trip.
+  final int?
+      tripId; // If null, it means creating a new trip. If not, editing an existing trip.
   final bool isOwner;
 
-  CreateTripPage({this.tripId, required this.isOwner});
+  const CreateTripPage({super.key, this.tripId, required this.isOwner});
 
   @override
   _CreateTripPageState createState() => _CreateTripPageState();
@@ -47,7 +48,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load trip data')),
+        const SnackBar(content: Text('Failed to load trip data')),
       );
     }
   }
@@ -61,7 +62,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
       // If userId is null, show an error or handle the case
       if (userId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('User ID not found. Please log in again.')),
+          const SnackBar(
+              content: Text('User ID not found. Please log in again.')),
         );
         return;
       }
@@ -87,7 +89,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
         Navigator.pop(context); // Go back to the previous screen
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save trip: ${responseBody['message']}')),
+          SnackBar(
+              content: Text('Failed to save trip: ${responseBody['message']}')),
         );
       }
     }
@@ -95,7 +98,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
 
   Future<void> _deleteTrip() async {
     final response = await http.post(
-      Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=delete_trip'),
+      Uri.parse(
+          'https://www.yasupada.com/mobiletrip/api.php?action=delete_trip'),
       body: {'trip_id': widget.tripId.toString()},
     );
 
@@ -107,14 +111,16 @@ class _CreateTripPageState extends State<CreateTripPage> {
       Navigator.pop(context); // Go back to the previous screen
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete trip: ${responseBody['message']}')),
+        SnackBar(
+            content: Text('Failed to delete trip: ${responseBody['message']}')),
       );
     }
   }
 
   Future<void> _closeTrip() async {
     final response = await http.post(
-      Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=close_trip'),
+      Uri.parse(
+          'https://www.yasupada.com/mobiletrip/api.php?action=close_trip'),
       body: {'trip_id': widget.tripId.toString()},
     );
 
@@ -126,7 +132,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
       Navigator.pop(context); // Go back to the previous screen
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to close trip: ${responseBody['message']}')),
+        SnackBar(
+            content: Text('Failed to close trip: ${responseBody['message']}')),
       );
     }
   }
@@ -153,14 +160,14 @@ class _CreateTripPageState extends State<CreateTripPage> {
         title: Text(isEditing ? 'Edit Trip' : 'Create Trip'),
         actions: widget.isOwner
             ? [
-                if (isEditing) 
+                if (isEditing)
                   IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: _deleteTrip,
                   ),
-                if (isEditing) 
+                if (isEditing)
                   IconButton(
-                    icon: Icon(Icons.close),
+                    icon: const Icon(Icons.close),
                     onPressed: _closeTrip,
                   ),
               ]
@@ -174,7 +181,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
             children: [
               TextFormField(
                 controller: _tripNameController,
-                decoration: InputDecoration(labelText: 'Trip Name'),
+                decoration: const InputDecoration(labelText: 'Trip Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a trip name';
@@ -184,7 +191,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
               ),
               TextFormField(
                 controller: _destinationController,
-                decoration: InputDecoration(labelText: 'Destination'),
+                decoration: const InputDecoration(labelText: 'Destination'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a destination';
@@ -195,7 +202,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
               TextFormField(
                 controller: _startDateController,
                 readOnly: true,
-                decoration: InputDecoration(labelText: 'Start Date'),
+                decoration: const InputDecoration(labelText: 'Start Date'),
                 onTap: () => _selectDate(_startDateController),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -207,7 +214,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
               TextFormField(
                 controller: _endDateController,
                 readOnly: true,
-                decoration: InputDecoration(labelText: 'End Date'),
+                decoration: const InputDecoration(labelText: 'End Date'),
                 onTap: () => _selectDate(_endDateController),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -216,7 +223,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _saveTrip,
                 child: Text(isEditing ? 'Update Trip' : 'Save Trip'),

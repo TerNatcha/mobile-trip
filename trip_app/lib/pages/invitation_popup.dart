@@ -1,10 +1,14 @@
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class InvitationPopup extends StatelessWidget {
   final int groupId;
   final int userId;
 
-  InvitationPopup({required this.groupId, required this.userId});
+  const InvitationPopup(
+      {super.key, required this.groupId, required this.userId});
 
   Future<void> _handleResponse(BuildContext context, bool accepted) async {
     final response = await http.post(
@@ -35,16 +39,16 @@ class InvitationPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Group Invitation'),
-      content:
-          Text('You have been invited to join a group. Do you want to accept?'),
+      title: const Text('Group Invitation'),
+      content: const Text(
+          'You have been invited to join a group. Do you want to accept?'),
       actions: [
         TextButton(
-          child: Text('No'),
+          child: const Text('No'),
           onPressed: () => _handleResponse(context, false),
         ),
         TextButton(
-          child: Text('Yes'),
+          child: const Text('Yes'),
           onPressed: () => _handleResponse(context, true),
         ),
       ],

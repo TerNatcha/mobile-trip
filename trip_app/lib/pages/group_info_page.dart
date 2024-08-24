@@ -7,7 +7,8 @@ class GroupInfoPage extends StatelessWidget {
   final List<String> users;
   final VoidCallback onEnterChat;
 
-  GroupInfoPage({
+  const GroupInfoPage({
+    super.key,
     required this.groupName,
     required this.groupDescription,
     required this.users,
@@ -25,34 +26,34 @@ class GroupInfoPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Group Description',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(groupDescription),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Users Joined',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
                 itemCount: users.length,
                 itemBuilder: (context, index) {
                   return ListTile(
                     title: Text(users[index]),
-                    leading: Icon(Icons.person),
+                    leading: const Icon(Icons.person),
                   );
                 },
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Center(
               child: ElevatedButton(
                 onPressed: onEnterChat,
-                child: Text('Go to Chat Room'),
+                child: const Text('Go to Chat Room'),
               ),
             ),
           ],

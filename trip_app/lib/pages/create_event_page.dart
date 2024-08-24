@@ -5,10 +5,12 @@ import 'dart:convert';
 
 class CreateEventPage extends StatefulWidget {
   final int tripId; // The trip ID to which the event belongs
-  final int? eventId; // If null, it means creating a new event. If not, editing an existing event.
+  final int?
+      eventId; // If null, it means creating a new event. If not, editing an existing event.
   final bool isOwner;
 
-  CreateEventPage({required this.tripId, this.eventId, required this.isOwner});
+  const CreateEventPage(
+      {super.key, required this.tripId, this.eventId, required this.isOwner});
 
   @override
   _CreateEventPageState createState() => _CreateEventPageState();
@@ -45,7 +47,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load event data')),
+        const SnackBar(content: Text('Failed to load event data')),
       );
     }
   }
@@ -72,7 +74,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
         Navigator.pop(context); // Go back to the previous screen
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save event: ${responseBody['message']}')),
+          SnackBar(
+              content:
+                  Text('Failed to save event: ${responseBody['message']}')),
         );
       }
     }
@@ -80,7 +84,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   Future<void> _deleteEvent() async {
     final response = await http.post(
-      Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=delete_event'),
+      Uri.parse(
+          'https://www.yasupada.com/mobiletrip/api.php?action=delete_event'),
       body: {'event_id': widget.eventId.toString()},
     );
 
@@ -92,7 +97,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
       Navigator.pop(context); // Go back to the previous screen
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete event: ${responseBody['message']}')),
+        SnackBar(
+            content:
+                Text('Failed to delete event: ${responseBody['message']}')),
       );
     }
   }
@@ -119,9 +126,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
         title: Text(isEditing ? 'Edit Event' : 'Create Event'),
         actions: widget.isOwner
             ? [
-                if (isEditing) 
+                if (isEditing)
                   IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: _deleteEvent,
                   ),
               ]
@@ -135,7 +142,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
             children: [
               TextFormField(
                 controller: _eventNameController,
-                decoration: InputDecoration(labelText: 'Event Name'),
+                decoration: const InputDecoration(labelText: 'Event Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter an event name';
@@ -145,7 +152,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               ),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a description';
@@ -156,7 +163,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               TextFormField(
                 controller: _eventDateController,
                 readOnly: true,
-                decoration: InputDecoration(labelText: 'Event Date'),
+                decoration: const InputDecoration(labelText: 'Event Date'),
                 onTap: () => _selectDate(_eventDateController),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -165,7 +172,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _saveEvent,
                 child: Text(isEditing ? 'Update Event' : 'Save Event'),

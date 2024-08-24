@@ -5,7 +5,7 @@ import 'dart:convert';
 class GroupChatPage extends StatefulWidget {
   final int groupId;
 
-  GroupChatPage({required this.groupId});
+  const GroupChatPage({super.key, required this.groupId});
 
   @override
   _GroupChatPageState createState() => _GroupChatPageState();
@@ -33,7 +33,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load messages')),
+        const SnackBar(content: Text('Failed to load messages')),
       );
     }
   }
@@ -53,8 +53,8 @@ class _GroupChatPageState extends State<GroupChatPage> {
       _messageController.clear();
       _fetchMessages();
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to send message')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to send message')));
     }
   }
 
@@ -62,7 +62,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Group Chat'),
+        title: const Text('Group Chat'),
       ),
       body: Column(
         children: [
@@ -85,11 +85,12 @@ class _GroupChatPageState extends State<GroupChatPage> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
-                    decoration: InputDecoration(hintText: 'Enter message'),
+                    decoration:
+                        const InputDecoration(hintText: 'Enter message'),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: () => _sendMessage(_messageController.text),
                 ),
               ],

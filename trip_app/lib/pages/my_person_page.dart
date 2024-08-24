@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class MyPersonPage extends StatefulWidget {
+  const MyPersonPage({super.key});
+
   @override
   _MyPersonPageState createState() => _MyPersonPageState();
 }
@@ -23,7 +25,8 @@ class _MyPersonPageState extends State<MyPersonPage> {
   Future<void> _updateProfile() async {
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
-        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=update_user'),
+        Uri.parse(
+            'https://www.yasupada.com/mobiletrip/api.php?action=update_user'),
         body: {
           'user_id': 'YOUR_USER_ID',
           'username': _usernameController.text,
@@ -38,7 +41,7 @@ class _MyPersonPageState extends State<MyPersonPage> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile.')),
+          const SnackBar(content: Text('Failed to update profile.')),
         );
       }
     }
@@ -48,20 +51,22 @@ class _MyPersonPageState extends State<MyPersonPage> {
     if (_imageFile != null) {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=update_profile_image'),
+        Uri.parse(
+            'https://www.yasupada.com/mobiletrip/api.php?action=update_profile_image'),
       );
       request.fields['user_id'] = 'YOUR_USER_ID';
-      request.files.add(await http.MultipartFile.fromPath('image', _imageFile!.path));
+      request.files
+          .add(await http.MultipartFile.fromPath('image', _imageFile!.path));
 
       final response = await request.send();
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile image updated successfully.')),
+          const SnackBar(content: Text('Profile image updated successfully.')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile image.')),
+          const SnackBar(content: Text('Failed to update profile image.')),
         );
       }
     }
@@ -69,7 +74,8 @@ class _MyPersonPageState extends State<MyPersonPage> {
 
   Future<void> _updateDetailedProfile() async {
     final response = await http.post(
-      Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=update_profile_info'),
+      Uri.parse(
+          'https://www.yasupada.com/mobiletrip/api.php?action=update_profile_info'),
       body: {
         'user_id': 'YOUR_USER_ID',
         'first_name': _firstNameController.text,
@@ -86,7 +92,7 @@ class _MyPersonPageState extends State<MyPersonPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update profile.')),
+        const SnackBar(content: Text('Failed to update profile.')),
       );
     }
   }
@@ -107,10 +113,10 @@ class _MyPersonPageState extends State<MyPersonPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Personal Information'),
+        title: const Text('My Personal Information'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: ListView(
@@ -122,18 +128,18 @@ class _MyPersonPageState extends State<MyPersonPage> {
                   backgroundImage:
                       _imageFile != null ? FileImage(_imageFile!) : null,
                   child: _imageFile == null
-                      ? Icon(Icons.camera_alt, size: 50)
+                      ? const Icon(Icons.camera_alt, size: 50)
                       : null,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _updateProfileImage,
-                child: Text('Update Profile Image'),
+                child: const Text('Update Profile Image'),
               ),
               TextFormField(
                 controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
+                decoration: const InputDecoration(labelText: 'Username'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your username';
@@ -143,7 +149,7 @@ class _MyPersonPageState extends State<MyPersonPage> {
               ),
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
@@ -151,32 +157,32 @@ class _MyPersonPageState extends State<MyPersonPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _updateProfile,
-                child: Text('Update Profile'),
+                child: const Text('Update Profile'),
               ),
-              Divider(),
+              const Divider(),
               TextFormField(
                 controller: _firstNameController,
-                decoration: InputDecoration(labelText: 'First Name'),
+                decoration: const InputDecoration(labelText: 'First Name'),
               ),
               TextFormField(
                 controller: _lastNameController,
-                decoration: InputDecoration(labelText: 'Last Name'),
+                decoration: const InputDecoration(labelText: 'Last Name'),
               ),
               TextFormField(
                 controller: _phoneController,
-                decoration: InputDecoration(labelText: 'Phone Number'),
+                decoration: const InputDecoration(labelText: 'Phone Number'),
               ),
               TextFormField(
                 controller: _addressController,
-                decoration: InputDecoration(labelText: 'Address'),
+                decoration: const InputDecoration(labelText: 'Address'),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _updateDetailedProfile,
-                child: Text('Update Detailed Profile'),
+                child: const Text('Update Detailed Profile'),
               ),
             ],
           ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ChatRoomPage extends StatefulWidget {
   final String groupName;
 
-  ChatRoomPage({required this.groupName});
+  const ChatRoomPage({super.key, required this.groupName, required groupId});
 
   @override
   _ChatRoomPageState createState() => _ChatRoomPageState();

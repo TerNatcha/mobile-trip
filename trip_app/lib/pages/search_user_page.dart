@@ -5,7 +5,7 @@ import 'dart:convert';
 class SearchUserPage extends StatefulWidget {
   final int groupId;
 
-  SearchUserPage({required this.groupId});
+  const SearchUserPage({super.key, required this.groupId});
 
   @override
   _SearchUserPageState createState() => _SearchUserPageState();
@@ -33,12 +33,13 @@ class _SearchUserPageState extends State<SearchUserPage> {
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load users')),
+          const SnackBar(content: Text('Failed to load users')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred while searching for users')),
+        const SnackBar(
+            content: Text('An error occurred while searching for users')),
       );
     } finally {
       setState(() {
@@ -74,7 +75,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Users'),
+        title: const Text('Search Users'),
       ),
       body: Column(
         children: [
@@ -85,14 +86,14 @@ class _SearchUserPageState extends State<SearchUserPage> {
               decoration: InputDecoration(
                 labelText: 'Search Users',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
+                  icon: const Icon(Icons.search),
                   onPressed: () => _searchUsers(_searchController.text),
                 ),
               ),
             ),
           ),
           isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Expanded(
                   child: ListView.builder(
                     itemCount: users.length,
@@ -102,7 +103,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
                         title: Text(user['name']),
                         subtitle: Text(user['email']),
                         trailing: IconButton(
-                          icon: Icon(Icons.send),
+                          icon: const Icon(Icons.send),
                           onPressed: () => _inviteUser(user['id']),
                         ),
                       );

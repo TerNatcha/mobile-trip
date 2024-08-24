@@ -8,6 +8,8 @@ import 'my_person_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TabBasePage extends StatefulWidget {
+  const TabBasePage({super.key});
+
   @override
   _TabBasePageState createState() => _TabBasePageState();
 }
@@ -28,16 +30,16 @@ class _TabBasePageState extends State<TabBasePage> {
       'token': prefs.getString('token'),
     };
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Trip Management'),
+          title: const Text('Trip Management'),
           centerTitle: true,
-          bottom: TabBar(
+          bottom: const TabBar(
             indicatorColor: Colors.white,
             indicatorWeight: 4.0,
             labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -65,12 +67,14 @@ class _TabBasePageState extends State<TabBasePage> {
         body: TabBarView(
           children: [
             TripListPage(),
-            GroupListPage(),
-            CalendarPage(),
+            const GroupListPage(
+              isOwner: true,
+              isJoined: true,
+            ),
+            const CalendarPage(),
             MyPersonPage(),
           ],
         ),
-        
       ),
     );
   }

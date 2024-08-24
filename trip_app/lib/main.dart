@@ -4,10 +4,12 @@ import 'pages/login_page.dart';
 import 'pages/tab_base_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,16 +17,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SplashScreen(), // You can define a splash screen here or check for the login state
+      home:
+          const SplashScreen(), // You can define a splash screen here or check for the login state
       routes: {
         '/login': (context) => LoginPage(),
-        '/tabBasePage': (context) => TabBasePage(),
+        '/tabBasePage': (context) => const TabBasePage(),
       },
     );
   }
 }
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -38,7 +43,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString('username'); // Check if a username is saved in SharedPreferences
+    final username = prefs.getString(
+        'username'); // Check if a username is saved in SharedPreferences
 
     if (username != null) {
       // User is already logged in, navigate to TabBasePage
@@ -51,9 +57,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
-        child: CircularProgressIndicator(), // Show a loading indicator while checking the login status
+        child:
+            CircularProgressIndicator(), // Show a loading indicator while checking the login status
       ),
     );
   }

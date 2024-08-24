@@ -19,3 +19,5 @@ https://www.yasupada.com/phpMyAdmin/index.php?route=/sql&pos=0&db=yasupada_trip&
 
 yasupada_trip
 trip123456
+
+curl -v -X POST "https://www.yasupada.com/mobiletrip/api.php?action=create_group" -H "Content-Type: application/json" -d '{"group_name": "Development Team", "user_id": "12345"}'

@@ -26,9 +26,9 @@ class _TripListPageState extends State<TripListPage> {
     });
 
     try {
-      
       final response = await http.get(
-        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trips'),
+        Uri.parse(
+            'https://www.yasupada.com/mobiletrip/api.php?action=get_trips'),
       );
 
       if (response.statusCode == 200) {
@@ -41,7 +41,7 @@ class _TripListPageState extends State<TripListPage> {
           isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load trips')),
+          const SnackBar(content: Text('Failed to load trips')),
         );
       }
     } catch (e) {
@@ -49,7 +49,7 @@ class _TripListPageState extends State<TripListPage> {
         isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred while fetching trips')),
+        const SnackBar(content: Text('An error occurred while fetching trips')),
       );
     }
   }
@@ -58,15 +58,16 @@ class _TripListPageState extends State<TripListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Trips'),
+        title: const Text('My Trips'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CreateTripPage(isOwner: true), // Adjust based on user permissions
+                  builder: (context) => CreateTripPage(
+                      isOwner: true), // Adjust based on user permissions
                 ),
               );
             },
@@ -74,9 +75,9 @@ class _TripListPageState extends State<TripListPage> {
         ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : trips.isEmpty
-              ? Center(child: Text('No trips available'))
+              ? const Center(child: Text('No trips available'))
               : ListView.builder(
                   itemCount: trips.length,
                   itemBuilder: (context, index) {
@@ -95,13 +96,14 @@ class _TripListPageState extends State<TripListPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => TripInfoPage(tripId: trip['trip_id']),
+                            builder: (context) =>
+                                TripInfoPage(tripId: trip['trip_id']),
                           ),
                         );
                       },
                     );
                   },
-                ), 
+                ),
     );
   }
 }

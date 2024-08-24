@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GroupOfUserPage extends StatefulWidget {
+  const GroupOfUserPage({super.key});
+
   @override
   _GroupOfUserPageState createState() => _GroupOfUserPageState();
 }
@@ -28,7 +31,8 @@ class _GroupOfUserPageState extends State<GroupOfUserPage> {
 
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User ID not found. Please log in again.')),
+        const SnackBar(
+            content: Text('User ID not found. Please log in again.')),
       );
       return;
     }
@@ -48,7 +52,7 @@ class _GroupOfUserPageState extends State<GroupOfUserPage> {
         isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load groups')),
+        const SnackBar(content: Text('Failed to load groups')),
       );
     }
   }
@@ -68,12 +72,12 @@ class _GroupOfUserPageState extends State<GroupOfUserPage> {
     );
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Group created successfully')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Group created successfully')));
       _fetchGroups();
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to create group')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to create group')));
     }
   }
 
@@ -84,21 +88,21 @@ class _GroupOfUserPageState extends State<GroupOfUserPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Create Group'),
+          title: const Text('Create Group'),
           content: TextField(
             controller: _groupNameController,
-            decoration: InputDecoration(hintText: 'Enter group name'),
+            decoration: const InputDecoration(hintText: 'Enter group name'),
           ),
           actions: [
             TextButton(
-              child: Text('Create'),
+              child: const Text('Create'),
               onPressed: () {
                 Navigator.of(context).pop();
                 _createGroup(_groupNameController.text);
               },
             ),
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -113,33 +117,25 @@ class _GroupOfUserPageState extends State<GroupOfUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Groups'),
+        title: const Text('My Groups'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: _showCreateGroupDialog,
           ),
         ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : groups.isEmpty
-              ? Center(child: Text('No groups available'))
+              ? const Center(child: Text('No groups available'))
               : ListView.builder(
                   itemCount: groups.length,
                   itemBuilder: (context, index) {
                     final group = groups[index];
                     return ListTile(
                       title: Text(group['name']),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                GroupChatPage(groupId: group['id']),
-                          ),
-                        );
-                      },
+                      onTap: () {},
                     );
                   },
                 ),

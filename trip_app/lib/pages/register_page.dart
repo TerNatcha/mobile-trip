@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
@@ -66,13 +68,13 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Logo or App Name
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 40.0),
                 child: CircleAvatar(
                   radius: 50.0,
                   backgroundImage:
@@ -88,10 +90,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  prefixIcon: Icon(Icons.person),
+                  prefixIcon: const Icon(Icons.person),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Email Field
               TextField(
@@ -101,11 +103,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  prefixIcon: Icon(Icons.email),
+                  prefixIcon: const Icon(Icons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Password Field
               TextField(
@@ -115,11 +117,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  prefixIcon: Icon(Icons.lock),
+                  prefixIcon: const Icon(Icons.lock),
                 ),
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Error Message
               if (_errorMessage != null)
@@ -127,7 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   padding: const EdgeInsets.only(bottom: 20.0),
                   child: Text(
                     _errorMessage!,
-                    style: TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red),
                   ),
                 ),
 
@@ -135,15 +137,17 @@ class _RegisterPageState extends State<RegisterPage> {
               ElevatedButton(
                 onPressed: _isLoading ? null : _register,
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-                child:
-                    _isLoading ? CircularProgressIndicator() : Text('Register'),
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Register'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Login Button
               TextButton(
@@ -153,7 +157,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     MaterialPageRoute(builder: (context) => LoginPage()),
                   );
                 },
-                child: Text('Already have an account? Login here'),
+                child: const Text('Already have an account? Login here'),
               ),
             ],
           ),
