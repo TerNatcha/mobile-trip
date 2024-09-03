@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'trip_info_page.dart';
 import 'trip_list_page.dart';
 import 'group_list_page.dart';
-
 import 'calendar_page.dart';
 import 'my_person_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +25,7 @@ class _TabBasePageState extends State<TabBasePage> {
   Future<Map<String, String?>> getUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
     return {
+      'user_id': prefs.getString('user_id'),
       'username': prefs.getString('username'),
       'token': prefs.getString('token'),
     };
@@ -34,7 +34,7 @@ class _TabBasePageState extends State<TabBasePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Trip Management'),
@@ -64,16 +64,30 @@ class _TabBasePageState extends State<TabBasePage> {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            TripListPage(),
-            const GroupListPage(
-              isOwner: true,
-              isJoined: true,
-            ),
-            const CalendarPage(),
-            MyPersonPage(),
-          ],
+        body: FutureBuilder<Map<String, String?>>(
+          future: _userInfoFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (snapshot.hasData) {
+              final userId = snapshot.data!['user_id'];
+
+              return TabBarView(
+                children: [
+                  TripListPage(),
+                  const GroupListPage(userId: userId ??),
+                  const CalendarPage(),
+                  MyPersonPage(
+                      userId: userId ??
+                          'unknown') // Pass the user_id to MyPersonPage
+                ],
+              );
+            } else {
+              return const Center(child: Text('No user data found.'));
+            }
+          },
         ),
       ),
     );

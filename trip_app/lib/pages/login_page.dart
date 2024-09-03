@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacementNamed(context, '/tabBasePage');
       } else {
         setState(() {
-          _errorMessage = responseData['message'];
+          _errorMessage = responseData;
         });
       }
     } catch (error) {

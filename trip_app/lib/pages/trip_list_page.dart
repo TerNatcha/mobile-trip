@@ -66,7 +66,7 @@ class _TripListPageState extends State<TripListPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CreateTripPage(
+                  builder: (context) => const CreateTripPage(
                       isOwner: true), // Adjust based on user permissions
                 ),
               );

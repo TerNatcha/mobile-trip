@@ -6,11 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'chat_room_page.dart';
 
 class GroupListPage extends StatefulWidget {
-  final bool isOwner;
-  final bool isJoined;
-
-  const GroupListPage(
-      {super.key, required this.isOwner, required this.isJoined});
+  final String userId;
+  const GroupListPage({super.key, required this.userId});
 
   @override
   _GroupListPageState createState() => _GroupListPageState();
@@ -27,7 +24,7 @@ class _GroupListPageState extends State<GroupListPage> {
 
   Future<void> _fetchGroupList() async {
     final response = await http.get(Uri.parse(
-        'https://www.yasupada.com/mobiletrip/api.php?action=get_groups&isOwner=${widget.isOwner}&isJoined=${widget.isJoined}'));
+        'https://www.yasupada.com/mobiletrip/api.php?action=get_groups&user_id=${widget.userId}'));
     if (response.statusCode == 200) {
       setState(() {
         _groupList = json.decode(response.body);
@@ -40,17 +37,35 @@ class _GroupListPageState extends State<GroupListPage> {
   // Function to handle group creation
   void _createGroup() {
     String groupName = '';
+    String description = '';
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Create Group'),
-          content: TextField(
-            decoration: const InputDecoration(hintText: "Enter Group Name"),
-            onChanged: (value) {
-              groupName = value;
-            },
+          content: Column(
+            mainAxisSize: MainAxisSize
+                .min, // This makes sure the dialog is sized appropriately
+            children: [
+              // TextField for Group Name
+              TextField(
+                decoration: const InputDecoration(hintText: "Enter Group Name"),
+                onChanged: (value) {
+                  groupName = value;
+                },
+              ),
+              const SizedBox(height: 16.0), // Add space between the fields
+
+              // TextField for Description
+              TextField(
+                decoration:
+                    const InputDecoration(hintText: "Enter Group Description"),
+                onChanged: (value) {
+                  description = value;
+                },
+              ),
+            ],
           ),
           actions: [
             TextButton(
@@ -61,7 +76,7 @@ class _GroupListPageState extends State<GroupListPage> {
 
                 // Make sure userId is not null before making the API call
                 if (userId != null) {
-                  _createGroupApi(groupName, userId);
+                  _createGroupApi(groupName, userId, description);
                   Navigator.of(context).pop(); // Close the dialog
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -84,20 +99,23 @@ class _GroupListPageState extends State<GroupListPage> {
   }
 
   // Function to call the create_group API
-  Future<void> _createGroupApi(String groupName, String userId) async {
+  Future<void> _createGroupApi(
+      String groupName, String userId, String description) async {
     final response = await http.post(
       Uri.parse(
           'https://www.yasupada.com/mobiletrip/api.php?action=create_group'),
-      body: {
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({
         'group_name': groupName,
+        'description': description,
         'user_id': userId, // Include the user ID in the API request
-      },
+      }),
     );
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
 
-      if (result['success'] == true) {
+      if (result['status'] == 'success') {
         // Group successfully created, refresh the group list
         _fetchGroupList();
         ScaffoldMessenger.of(context).showSnackBar(
