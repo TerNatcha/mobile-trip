@@ -1,9 +1,9 @@
 <?php
 class Database {
     private $host = "localhost";
-    private $db_name = "trip_management";
-    private $username = "root";
-    private $password = "";
+    private $db_name = "yasupada_trip";
+    private $username = "yasupada_trip";
+    private $password = "trip123456";
     public $conn;
 
     public function getConnection() {
