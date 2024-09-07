@@ -54,46 +54,47 @@ class _CreateTripPageState extends State<CreateTripPage> {
   }
 
   Future<void> _saveTrip() async {
-    if (_formKey.currentState!.validate()) {
-      // Retrieve the user ID from SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      int? userId = prefs.getInt('user_id');
+    // if (_formKey.currentState!.validate()) {
+    // Retrieve the user ID from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('user_id');
 
-      // If userId is null, show an error or handle the case
-      if (userId == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('User ID not found. Please log in again.')),
-        );
-        return;
-      }
-
-      final action = isEditing ? 'edit_trip' : 'create_trip';
-      final response = await http.post(
-        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=$action'),
-        body: {
-          'trip_id': widget.tripId?.toString() ?? '',
-          'user_id': userId.toString(), // Use user_id from SharedPreferences
-          'name': _tripNameController.text,
-          'destination': _destinationController.text,
-          'start_date': _startDateController.text,
-          'end_date': _endDateController.text,
-        },
+    // If userId is null, show an error or handle the case
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('User ID not found. Please log in again.')),
       );
-
-      final responseBody = json.decode(response.body);
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseBody['message'])),
-        );
-        Navigator.pop(context); // Go back to the previous screen
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Failed to save trip: ${responseBody['message']}')),
-        );
-      }
+      return;
     }
+
+    final action = isEditing ? 'edit_trip' : 'create_trip';
+    final response = await http.post(
+      Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=$action'),
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({
+        'trip_id': widget.tripId?.toString() ?? '',
+        'user_id': userId.toString(), // Use user_id from SharedPreferences
+        'name': _tripNameController.text,
+        'destination': _destinationController.text,
+        'start_date': _startDateController.text,
+        'end_date': _endDateController.text,
+      }),
+    );
+
+    final responseBody = json.decode(response.body);
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(responseBody['message'])),
+      );
+      Navigator.pop(context); // Go back to the previous screen
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Failed to save trip: ${responseBody['message']}')),
+      );
+    }
+    // }
   }
 
   Future<void> _deleteTrip() async {
