@@ -97,7 +97,7 @@ class _TripListPageState extends State<TripListPage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                TripInfoPage(tripId: trip['trip_id']),
+                                TripInfoPage(tripId: trip['id']),
                           ),
                         );
                       },

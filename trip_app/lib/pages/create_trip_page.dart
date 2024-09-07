@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPre
 import 'dart:convert';
 
 class CreateTripPage extends StatefulWidget {
-  final int?
+  final String?
       tripId; // If null, it means creating a new trip. If not, editing an existing trip.
   final bool isOwner;
 
@@ -34,7 +34,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
 
   Future<void> _loadTripData() async {
     final response = await http.post(
-      Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_trip'),
+      Uri.parse(
+          'https://www.yasupada.com/mobiletrip/api.php?action=get_trip&trip_id=${widget.tripId}'),
       body: {'trip_id': widget.tripId.toString()},
     );
 

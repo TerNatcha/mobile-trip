@@ -19,6 +19,7 @@ class ChatRoomPage extends StatefulWidget {
 
 class _ChatRoomPageState extends State<ChatRoomPage> {
   List<Map<String, String>> messages = [];
+  List<Map<String, String>> trips = []; // Store available trips
   TextEditingController messageController = TextEditingController();
   String? tripId;
   String? userId;
@@ -28,6 +29,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     super.initState();
     fetchUserId(); // Fetch user_id from shared preferences
     fetchMessages();
+    fetchAvailableTrips(); // Fetch trips when the page loads
   }
 
   Future<void> fetchUserId() async {
@@ -69,14 +71,37 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
   }
 
+  Future<void> fetchAvailableTrips() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'https://www.yasupada.com/mobiletrip/api.php?action=get_trips'),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          trips = data
+              .map((trip) => {
+                    'trip_id': trip['id'].toString(),
+                    'trip_name': trip['name'].toString(),
+                  })
+              .toList();
+        });
+      } else {
+        print('Failed to fetch trips');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   Future<void> sendMessage() async {
     String message = messageController.text.trim();
     if (message.isNotEmpty) {
-      // Format the message
       String formattedMessage =
           tripId != null ? '1:${tripId!}\n$message' : '0:$message';
-
-      // Send the message
+      tripId = null;
       try {
         if (userId == null) {
           print('User ID is not available');
@@ -90,20 +115,16 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           body: jsonEncode({
             'group_id': widget.groupId,
             'message': formattedMessage,
-            'user_id': userId, // Use user ID from shared preferences
+            'user_id': userId,
           }),
         );
 
         if (response.statusCode == 200) {
           setState(() {
-            messages.add({
-              'user': 'Me', // You can replace this with actual user info
-              'message': message,
-            });
+            messages.add({'user': 'Me', 'message': message});
             messageController.clear();
           });
         } else {
-          // Handle error
           print('Failed to send message');
         }
       } catch (e) {
@@ -112,30 +133,85 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
   }
 
-  void _showTripIdDialog() {
+  Future<void> joinTrip(String tripId) async {
+    // Call API to join trip
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'https://www.yasupada.com/mobiletrip/api.php?action=join_trip'),
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode({
+          'trip_id': tripId,
+          'user_id': userId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Successfully joined the trip');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Joined trip successfully!')),
+        );
+      } else {
+        print('Failed to join trip');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void _showTripSelectionDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        TextEditingController tripIdController = TextEditingController();
-
         return AlertDialog(
-          title: const Text('Enter Trip ID'),
-          content: TextField(
-            controller: tripIdController,
-            decoration: const InputDecoration(hintText: 'Trip ID'),
-            keyboardType: TextInputType.number,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  tripId = tripIdController.text.trim();
-                });
-                Navigator.of(context).pop();
+          title: const Text('Select a Trip'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: trips.length,
+              itemBuilder: (context, index) {
+                var trip = trips[index];
+                return ListTile(
+                  title: Text(trip['trip_name'] ?? ''),
+                  onTap: () {
+                    setState(() {
+                      tripId = trip['trip_id'];
+                    });
+                    // Call sendMessage to submit the selected tripId with the message
+                    sendMessage();
+                    Navigator.of(context).pop();
+                  },
+                );
               },
-              child: const Text('Save'),
             ),
-          ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showTripDetails(String tripId) {
+    // Show trip details with join option
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Trip Details'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Trip ID: $tripId'),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  joinTrip(tripId);
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Join Trip'),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -149,7 +225,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.trip_origin),
-            onPressed: _showTripIdDialog,
+            onPressed: _showTripSelectionDialog,
           ),
         ],
       ),
@@ -161,24 +237,32 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 var message = messages[index];
-                bool isMe =
-                    message['user'] == 'Me'; // Differentiate user messages
+                bool isMe = message['user'] == 'Me';
 
-                return Align(
-                  alignment:
-                      isMe ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4.0),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0, vertical: 8.0),
-                    decoration: BoxDecoration(
-                      color: isMe ? Colors.blueAccent : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Text(
-                      '${message['user']}: ${message['message']}',
-                      style:
-                          TextStyle(color: isMe ? Colors.white : Colors.black),
+                return GestureDetector(
+                  onTap: () {
+                    // Assuming the message contains trip details
+                    if (message['message']!.startsWith('1:')) {
+                      String tripId = message['message']!.split(':')[1];
+                      _showTripDetails(tripId);
+                    }
+                  },
+                  child: Align(
+                    alignment:
+                        isMe ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12.0, vertical: 8.0),
+                      decoration: BoxDecoration(
+                        color: isMe ? Colors.blueAccent : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Text(
+                        '${message['user']}: ${message['message']}',
+                        style: TextStyle(
+                            color: isMe ? Colors.white : Colors.black),
+                      ),
                     ),
                   ),
                 );
