@@ -79,9 +79,7 @@ class _TabBasePageState extends State<TabBasePage> {
                   TripListPage(),
                   GroupListPage(userId: userId),
                   const CalendarPage(),
-                  MyPersonPage(
-                      userId: userId ??
-                          'unknown') // Pass the user_id to MyPersonPage
+                  MyPersonPage() // Pass the user_id to MyPersonPage
                 ],
               );
             } else {
