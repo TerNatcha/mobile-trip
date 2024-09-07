@@ -93,6 +93,13 @@ switch ($action) {
     echo json_encode($trips);
     break;
 
+  case 'get_trip':
+    $trip = new Trip($db);
+    $trip_id = $_GET['trip_id'];
+    $trip = $trip->getTrip($trip_id);
+    echo json_encode($trip);
+    break;
+
 
   case 'edit_trip':
     $trip = new Trip($db);
@@ -483,6 +490,7 @@ switch ($action) {
   case 'send_message':
     $message = new Message($db);
 
+
     $data = extractRawJSON();
 
     // Check if the decoding was successful
@@ -500,7 +508,7 @@ switch ($action) {
     // $receiver_id = $data['receiver_id'];
     // $content = $data['content'];
 
-    if ($message->sendMessage($sender_id, $receiver_id, $content)) {
+    if ($message->sendMessage($group_id, $user_id, $message)) {
       echo json_encode(["message" => "Message sent successfully."]);
     } else {
       echo json_encode(["message" => "Failed to send message."]);

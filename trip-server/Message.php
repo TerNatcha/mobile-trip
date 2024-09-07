@@ -17,6 +17,7 @@ class Message
         try {
             $sql = "INSERT INTO messages (group_id, user_id, message) VALUES (:group_id, :user_id, :message)";
             $stmt = $this->conn->prepare($sql);
+            echo $sql;
             $stmt->bindParam(':group_id', $groupId);
             $stmt->bindParam(':user_id', $userId);
             $stmt->bindParam(':message', $message);
