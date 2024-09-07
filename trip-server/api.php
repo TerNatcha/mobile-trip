@@ -53,9 +53,9 @@ switch ($action) {
     $username = $data['username'];
     $password = $data['password'];
 
-    $user_id = $user->login($username, $password);
+    $res = $user->login($username, $password);
     if ($user_id) {
-      echo json_encode(["message" => "Login successful.", "user_id" => $user_id]);
+      echo json_encode(["message" => "Login successful.", "user_id" => $res['user_id'], "first_name" => $res['first_name'], "last_name" => $res['last_name'], "phone" => $res['phone'], "address" => $res['address']]);
     } else {
       echo json_encode(["message" => "Login failed."]);
     }

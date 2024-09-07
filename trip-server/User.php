@@ -71,7 +71,7 @@ class User
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row && password_verify($password, $row['password'])) {
-            return $row['id']; // Return user ID
+            return $row = $this->getUserInfo($row['id']);
         }
         return false;
     }
@@ -128,6 +128,8 @@ class User
         $query = "UPDATE " . $this->profile_table . " 
                   SET first_name = :first_name, last_name = :last_name,   phone = :phone ,   address = :address 
                   WHERE user_id = :user_id";
+        //echo $query;
+        //echo $user_id . "-" . $first_name . "-" .  $last_name . "-" .    $phone . "-" .    $address;
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
         $stmt->bindParam(':first_name', $first_name);
