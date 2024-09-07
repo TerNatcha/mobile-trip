@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'chat_room_page.dart';
 
 class GroupListPage extends StatefulWidget {
-  final String userId;
+  final String? userId;
   const GroupListPage({super.key, required this.userId});
 
   @override

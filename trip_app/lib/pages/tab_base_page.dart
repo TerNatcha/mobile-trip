@@ -77,7 +77,7 @@ class _TabBasePageState extends State<TabBasePage> {
               return TabBarView(
                 children: [
                   TripListPage(),
-                  const GroupListPage(userId: userId ??),
+                  GroupListPage(userId: userId),
                   const CalendarPage(),
                   MyPersonPage(
                       userId: userId ??
