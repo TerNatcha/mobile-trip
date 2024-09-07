@@ -42,6 +42,10 @@ class _LoginPageState extends State<LoginPage> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('user_id', responseData['user_id']);
         await prefs.setString('username', username);
+        await prefs.setString('first_name', responseData['first_name']);
+        await prefs.setString('last_name', responseData['last_name']);
+        await prefs.setString('phone', responseData['phone']);
+        await prefs.setString('address', responseData['address']);
         // await prefs.setString('token', responseData['token']); // Assuming the response contains a token
 
 // Show success SnackBar
