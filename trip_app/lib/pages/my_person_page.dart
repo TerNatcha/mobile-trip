@@ -51,11 +51,12 @@ class _MyPersonPageState extends State<MyPersonPage> {
       final response = await http.post(
         Uri.parse(
             'https://www.yasupada.com/mobiletrip/api.php?action=update_user'),
-        body: {
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode({
           'user_id': _userId,
           'username': _usernameController.text,
           'email': _emailController.text,
-        },
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -100,13 +101,14 @@ class _MyPersonPageState extends State<MyPersonPage> {
     final response = await http.post(
       Uri.parse(
           'https://www.yasupada.com/mobiletrip/api.php?action=update_profile_info'),
-      body: {
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({
         'user_id': _userId,
         'first_name': _firstNameController.text,
         'last_name': _lastNameController.text,
         'phone': _phoneController.text,
         'address': _addressController.text,
-      },
+      }),
     );
 
     if (response.statusCode == 200) {
