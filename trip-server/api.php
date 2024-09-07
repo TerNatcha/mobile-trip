@@ -7,6 +7,7 @@ include_once 'Functions.php';
 include_once 'User.php';
 include_once 'Trip.php';
 include_once 'Group.php';
+include_once 'Message.php';
 include_once 'db.php';
 
 $database = new Database();
@@ -477,6 +478,57 @@ switch ($action) {
     } else {
       echo json_encode(['status' => 'error', 'message' => 'No users found']);
     }
+    break;
+
+  case 'send_message':
+    $message = new Message($db);
+
+    $data = extractRawJSON();
+
+    // Check if the decoding was successful
+    if ($data === null) {
+      echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+      exit;
+    }
+
+    $group_id = $data['group_id'] ?? null;
+    $user_id = $data['user_id'] ?? null;
+    $message = $data['message'] ?? null;
+
+    // Retrieve message details
+    // $sender_id = $data['sender_id'];
+    // $receiver_id = $data['receiver_id'];
+    // $content = $data['content'];
+
+    if ($message->sendMessage($sender_id, $receiver_id, $content)) {
+      echo json_encode(["message" => "Message sent successfully."]);
+    } else {
+      echo json_encode(["message" => "Failed to send message."]);
+    }
+    break;
+
+  case 'get_messages':
+    $message = new Message($db);
+
+    $data = extractRawJSON();
+
+    // Check if the decoding was successful
+    if ($data === null) {
+      echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+      exit;
+    }
+
+    $group_id = $data['group_id'] ?? null;
+    // $user_id = $data['user_id'] ?? null;
+    // $message = $data['message'] ?? null;
+
+    if ($group_id === null) {
+      echo json_encode(['status' => 'error', 'message' => 'Missing user_id parameter']);
+      exit;
+    }
+
+    $messages = $message->getMessagesByGroup($group_id);
+    echo json_encode($messages);
     break;
 
   default:
