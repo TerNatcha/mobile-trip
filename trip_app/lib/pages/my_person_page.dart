@@ -163,32 +163,32 @@ class _MyPersonPageState extends State<MyPersonPage> {
                 onPressed: _updateProfileImage,
                 child: const Text('Update Profile Image'),
               ),
-              TextFormField(
-                controller: _usernameController,
-                decoration: const InputDecoration(labelText: 'Username'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your username';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _updateProfile,
-                child: const Text('Update Profile'),
-              ),
-              const Divider(),
+              // TextFormField(
+              //   controller: _usernameController,
+              //   decoration: const InputDecoration(labelText: 'Username'),
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Please enter your username';
+              //     }
+              //     return null;
+              //   },
+              // ),
+              // TextFormField(
+              //   controller: _emailController,
+              //   decoration: const InputDecoration(labelText: 'Email'),
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Please enter your email';
+              //     }
+              //     return null;
+              //   },
+              // ),
+              // const SizedBox(height: 16.0),
+              // ElevatedButton(
+              //   onPressed: _updateProfile,
+              //   child: const Text('Update Profile'),
+              // ),
+              // const Divider(),
               TextFormField(
                 controller: _firstNameController,
                 decoration: const InputDecoration(labelText: 'First Name'),
