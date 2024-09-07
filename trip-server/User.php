@@ -71,7 +71,7 @@ class User
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row && password_verify($password, $row['password'])) {
-            return $row = $this->getUserInfo($row['id']);
+            return $this->getUserInfo($row['id']);
         }
         return false;
     }
@@ -79,9 +79,9 @@ class User
     // Get User Information by ID
     public function getUserInfo($user_id)
     {
-        $query = "SELECT id, username, email, profile_image, created_at FROM " . $this->table_name . " WHERE id = :user_id LIMIT 0,1";
+        $query = "SELECT id,user_id, first_name,last_name,phone,address FROM " . $this->profile_table . " WHERE user_id = :user_id LIMIT 0,1";
         $stmt = $this->conn->prepare($query);
-
+        // echo $query;
         $stmt->bindParam(':user_id', $user_id);
         $stmt->execute();
 
