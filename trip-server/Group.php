@@ -54,7 +54,7 @@ class Group
     public function getGroups($userId)
     {
         try {
-            $sql = "SELECT g.id, g.name FROM groups g
+            $sql = "SELECT g.id, g.name,g.description FROM groups g
                     
                     WHERE g.owner_id = :user_id";
             $stmt = $this->conn->prepare($sql);

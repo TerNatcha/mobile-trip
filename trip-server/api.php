@@ -446,11 +446,12 @@ switch ($action) {
       echo json_encode(['status' => 'error', 'message' => 'Missing user_id parameter']);
       exit;
     }
- 
+
     $results = $group->getGroups($user_id);
 
     if ($results) {
-      echo json_encode(['status' => 'success', 'data' => $results]);
+      //echo json_encode(['status' => 'success', 'data' => $results]);
+      echo json_encode($results);
     } else {
       echo json_encode(['status' => 'error', 'message' => 'No groups found']);
     }
