@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:intl/intl.dart'; // For formatting dates
 import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart'; // For LatLng coordinates
 import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import 'dart:convert';
 
 class CreateTripPage extends StatefulWidget {
   final String?
-      tripId; // If null, it means creating a new trip. If not, editing an existing trip.
+      tripId; // If null, creating a new trip. If not, editing an existing trip.
   final bool isOwner;
 
   const CreateTripPage({super.key, this.tripId, required this.isOwner});
@@ -21,6 +23,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
   final _destinationController = TextEditingController();
   final _startDateController = TextEditingController();
   final _endDateController = TextEditingController();
+  LatLng?
+      selectedLocation; // For the selected latitude and longitude from the map
   bool isEditing = false;
 
   @override
@@ -46,6 +50,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
         _destinationController.text = data['destination'];
         _startDateController.text = data['start_date'];
         _endDateController.text = data['end_date'];
+        selectedLocation = LatLng(
+            double.parse(data['latitude']), double.parse(data['longitude']));
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -55,12 +61,9 @@ class _CreateTripPageState extends State<CreateTripPage> {
   }
 
   Future<void> _saveTrip() async {
-    // if (_formKey.currentState!.validate()) {
-    // Retrieve the user ID from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     String? userId = prefs.getString('user_id');
 
-    // If userId is null, show an error or handle the case
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -80,6 +83,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
         'destination': _destinationController.text,
         'start_date': _startDateController.text,
         'end_date': _endDateController.text,
+        'latitude': selectedLocation?.latitude.toString() ?? '',
+        'longitude': selectedLocation?.longitude.toString() ?? '',
       }),
     );
 
@@ -93,49 +98,6 @@ class _CreateTripPageState extends State<CreateTripPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text('Failed to save trip: ${responseBody['message']}')),
-      );
-    }
-    // }
-  }
-
-  Future<void> _deleteTrip() async {
-    final response = await http.post(
-      Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=delete_trip'),
-      body: {'trip_id': widget.tripId.toString()},
-    );
-
-    final responseBody = json.decode(response.body);
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(responseBody['message'])),
-      );
-      Navigator.pop(context); // Go back to the previous screen
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Failed to delete trip: ${responseBody['message']}')),
-      );
-    }
-  }
-
-  Future<void> _closeTrip() async {
-    final response = await http.post(
-      Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=close_trip'),
-      body: {'trip_id': widget.tripId.toString()},
-    );
-
-    final responseBody = json.decode(response.body);
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(responseBody['message'])),
-      );
-      Navigator.pop(context); // Go back to the previous screen
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Failed to close trip: ${responseBody['message']}')),
       );
     }
   }
@@ -153,6 +115,13 @@ class _CreateTripPageState extends State<CreateTripPage> {
         controller.text = formattedDate;
       });
     }
+  }
+
+  // Method to handle tapping on the map and updating the selected location
+  void _onMapTap(LatLng latlng) {
+    setState(() {
+      selectedLocation = latlng; // Update the selected location
+    });
   }
 
   @override
@@ -226,6 +195,39 @@ class _CreateTripPageState extends State<CreateTripPage> {
                 },
               ),
               const SizedBox(height: 20),
+              if (selectedLocation != null)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Selected Location:'),
+                    Text(
+                        'Latitude: ${selectedLocation!.latitude}, Longitude: ${selectedLocation!.longitude}'),
+                  ],
+                ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 300,
+                child: FlutterMap(
+                  options: MapOptions(
+                    initialCenter: const LatLng(
+                        13.7563, 100.5018), // Default map center (Bangkok)
+                    initialZoom: 13.0,
+                    // onTap: _onMapTap, // Handle map taps
+                  ),
+                  children: [
+                    TileLayer(
+                      // Display map tiles from any source
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
+                      userAgentPackageName: 'com.example.app',
+                      maxNativeZoom:
+                          19, // Scale tiles when the server doesn't support higher zoom levels
+                      // And many more recommended properties!
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _saveTrip,
                 child: Text(isEditing ? 'Update Trip' : 'Save Trip'),
@@ -236,4 +238,46 @@ class _CreateTripPageState extends State<CreateTripPage> {
       ),
     );
   }
+
+  Future<void> _deleteTrip() async {
+    final response = await http.post(
+      Uri.parse(
+          'https://www.yasupada.com/mobiletrip/api.php?action=delete_trip'),
+      body: {'trip_id': widget.tripId.toString()},
+    );
+
+    final responseBody = json.decode(response.body);
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(responseBody['message'])),
+      );
+      Navigator.pop(context); // Go back to the previous screen
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to delete trip')),
+      );
+    }
+  }
+
+  Future<void> _closeTrip() async {
+    final response = await http.post(
+      Uri.parse(
+          'https://www.yasupada.com/mobiletrip/api.php?action=close_trip'),
+      body: {'trip_id': widget.tripId.toString()},
+    );
+
+    final responseBody = json.decode(response.body);
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(responseBody['message'])),
+      );
+      Navigator.pop(context); // Go back to the previous screen
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to close trip')),
+      );
+    }
+  }
+
+  MarkerLayerOptions({required List<Marker> markers}) {}
 }
