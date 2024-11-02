@@ -50,6 +50,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
         _destinationController.text = data['destination'];
         _startDateController.text = data['start_date'];
         _endDateController.text = data['end_date'];
+
         selectedLocation = LatLng(
             double.parse(data['latitude']), double.parse(data['longitude']));
       });
@@ -212,7 +213,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
                     initialCenter: const LatLng(
                         13.7563, 100.5018), // Default map center (Bangkok)
                     initialZoom: 13.0,
-                    // onTap: _onMapTap, // Handle map taps
+                    onTap: _onMapTap, // Handle map taps
                   ),
                   children: [
                     TileLayer(
@@ -224,6 +225,22 @@ class _CreateTripPageState extends State<CreateTripPage> {
                           19, // Scale tiles when the server doesn't support higher zoom levels
                       // And many more recommended properties!
                     ),
+                    if (selectedLocation != null)
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: selectedLocation!,
+                            width: 40.0,
+                            height: 40.0,
+                            builder: (ctx) => const Icon(
+                              Icons.location_pin,
+                              color: Colors.red,
+                              size: 40,
+                            ),
+                            child: const Text(""),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),
