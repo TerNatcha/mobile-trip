@@ -21,3 +21,8 @@ yasupada_trip
 trip123456
 
 curl -v -X POST "https://www.yasupada.com/mobiletrip/api.php?action=create_group" -H "Content-Type: application/json" -d '{"group_name": "Development Team", "user_id": "12345"}'
+
+
+
+
+curl -X POST https://www.yasupada.com/mobiletrip/api.php?action=send_message -H "Content-Type: application/json" -d '{"group_id": "your_group_id_here", "message": "your_message_here", "user_id": "your_user_id_here"}'
