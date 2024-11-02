@@ -78,8 +78,9 @@ switch ($action) {
     $destination = $data['destination'];
     $start_date = $data['start_date'];
     $end_date = $data['end_date'];
-
-    if ($trip->createTrip($user_id, $name, $destination, $start_date, $end_date)) {
+    $latitude = $data['latitude'];
+    $longitude = $data['longitude'];
+    if ($trip->createTrip($user_id, $name, $destination, $start_date, $end_date, $latitude, $longitude)) {
       echo json_encode(["message" => "Trip created successfully."]);
     } else {
       echo json_encode(["message" => "Failed to create trip."]);
@@ -117,8 +118,9 @@ switch ($action) {
     $destination = $data['destination'];
     $start_date = $data['start_date'];
     $end_date = $data['end_date'];
-
-    if ($trip->editTrip($trip_id, $name, $destination, $start_date, $end_date)) {
+    $latitude = $data['latitude'];
+    $longitude = $data['longitude'];
+    if ($trip->editTrip($trip_id, $name, $destination, $start_date, $end_date, $latitude, $longitude)) {
       echo json_encode(["message" => "Trip updated successfully."]);
     } else {
       echo json_encode(["message" => "Failed to update trip."]);

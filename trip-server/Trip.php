@@ -15,9 +15,9 @@ class Trip
         $this->conn = $db;
     }
 
-    public function createTrip($user_id, $name, $destination, $start_date, $end_date)
+    public function createTrip($user_id, $name, $destination, $start_date, $end_date, $latitude, $longitude)
     {
-        $query = "INSERT INTO " . $this->table_name . " (user_id, name, destination, start_date, end_date) VALUES (:user_id, :name, :destination, :start_date, :end_date)";
+        $query = "INSERT INTO " . $this->table_name . " (user_id, name, destination, start_date, end_date,latitude ,longitude) VALUES (:user_id, :name, :destination, :start_date, :end_date, :latitude , :longitude)";
         $stmt = $this->conn->prepare($query);
 
         // Bind parameters
@@ -26,6 +26,8 @@ class Trip
         $stmt->bindParam(':destination', $destination);
         $stmt->bindParam(':start_date', $start_date);
         $stmt->bindParam(':end_date', $end_date);
+        $stmt->bindParam(':latitude', $latitude);
+        $stmt->bindParam(':longitude', $longitude);
 
         if ($stmt->execute()) {
             return true;
@@ -64,10 +66,10 @@ class Trip
         return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
     }
 
-    public function editTrip($trip_id, $name, $destination, $start_date, $end_date)
+    public function editTrip($trip_id, $name, $destination, $start_date, $end_date, $latitude, $longitude)
     {
         $query = "UPDATE " . $this->table_name . " 
-                  SET name = :name, destination = :destination, start_date = :start_date, end_date = :end_date 
+                  SET name = :name, destination = :destination, start_date = :start_date, end_date = :end_date, latitude = :latitude, longitude = :longitude 
                   WHERE id = :trip_id";
         $stmt = $this->conn->prepare($query);
 
@@ -76,6 +78,8 @@ class Trip
         $stmt->bindParam(':destination', $destination);
         $stmt->bindParam(':start_date', $start_date);
         $stmt->bindParam(':end_date', $end_date);
+        $stmt->bindParam(':latitude', $latitude);
+        $stmt->bindParam(':longitude', $longitude);
 
         if ($stmt->execute()) {
             return true;
