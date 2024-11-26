@@ -449,7 +449,7 @@ switch ($action) {
     $group = new Group($db);
 
     // Get parameters from the request
-    $user_id = $_GET['user_id'] ?? null;
+    $user_id = $_GET['user_id'];
 
     // Validate parameters
     if ($user_id === null) {
@@ -470,7 +470,7 @@ switch ($action) {
 
   case 'search_users':
     // Get the query parameter
-    $query = $_GET['query'] ?? '';
+    $query = $_GET['query'];
 
     // Validate the query
     if (empty($query)) {
@@ -492,7 +492,6 @@ switch ($action) {
   case 'send_message':
     $message = new Message($db);
 
-
     $data = extractRawJSON();
 
     // Check if the decoding was successful
@@ -501,16 +500,13 @@ switch ($action) {
       exit;
     }
 
-    $group_id = $data['group_id'] ?? null;
-    $user_id = $data['user_id'] ?? null;
-    $message = $data['message'] ?? null;
+    // {group_id: 1, message: 0:sss, user_id: 16}
 
-    // Retrieve message details
-    // $sender_id = $data['sender_id'];
-    // $receiver_id = $data['receiver_id'];
-    // $content = $data['content'];
+    $group_id = $data['group_id'];
+    $user_id = $data['user_id'];
+    $messages = $data['message'];
 
-    if ($message->sendMessage($group_id, $user_id, $message)) {
+    if ($message->sendMessage($group_id, $user_id, $messages)) {
       echo json_encode(["message" => "Message sent successfully."]);
     } else {
       echo json_encode(["message" => "Failed to send message."]);
