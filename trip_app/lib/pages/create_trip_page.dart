@@ -27,6 +27,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
       selectedLocation; // For the selected latitude and longitude from the map
   bool isEditing = false;
 
+  List<Marker> markers = [];
+
   @override
   void initState() {
     super.initState();
@@ -118,11 +120,33 @@ class _CreateTripPageState extends State<CreateTripPage> {
     }
   }
 
-  // Method to handle tapping on the map and updating the selected location
-  void _onMapTap(LatLng latlng) {
+  void _onMapTap(BuildContext context, LatLng latlng) {
     setState(() {
+    markers.clear();
       selectedLocation = latlng; // Update the selected location
+      // Add a new marker at the tapped location
+      markers.add(
+        Marker(
+          point: latlng,
+          width: 80.0,
+          height: 80.0, 
+          child: const Icon(
+            Icons.location_pin,
+            color: Colors.red,
+            size: 40.0,
+          ),
+        ),
+      );
     });
+    
+
+    // Show a snackbar with the tapped location
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Tapped location: Latitude: ${latlng.latitude}, Longitude: ${latlng.longitude}"),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -213,7 +237,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
                     initialCenter: const LatLng(
                         13.7563, 100.5018), // Default map center (Bangkok)
                     initialZoom: 13.0,
-                    onTap: _onMapTap, // Handle map taps
+                       onTap: (tapPosition, latlng) => _onMapTap(context, latlng), // Pass context and latlng to the tap handler
+       
                   ),
                   children: [
                     TileLayer(
@@ -224,23 +249,11 @@ class _CreateTripPageState extends State<CreateTripPage> {
                       maxNativeZoom:
                           19, // Scale tiles when the server doesn't support higher zoom levels
                       // And many more recommended properties!
-                    ),
-                    if (selectedLocation != null)
+                    ), 
+                    
                       MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: selectedLocation!,
-                            width: 40.0,
-                            height: 40.0,
-                            builder: (ctx) => const Icon(
-                              Icons.location_pin,
-                              color: Colors.red,
-                              size: 40,
-                            ),
-                            child: const Text(""),
-                          ),
-                        ],
-                      ),
+            markers: markers, // Display all markers in the list
+          ),
                   ],
                 ),
               ),
