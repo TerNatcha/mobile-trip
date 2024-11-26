@@ -119,6 +119,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           }),
         );
 
+        print({
+          'group_id': widget.groupId,
+          'message': formattedMessage,
+          'user_id': userId,
+        });
         if (response.statusCode == 200) {
           setState(() {
             messages.add({'user': 'Me', 'message': message});
@@ -126,6 +131,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           });
         } else {
           print('Failed to send message');
+          // Use SnackBar to show error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to send message: ${response.reasonPhrase}'),
+              duration: const Duration(seconds: 3),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
         }
       } catch (e) {
         print('Error: $e');
