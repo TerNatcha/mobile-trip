@@ -80,6 +80,7 @@ switch ($action) {
     $end_date = $data['end_date'];
     $latitude = $data['latitude'];
     $longitude = $data['longitude'];
+
     if ($trip->createTrip($user_id, $name, $destination, $start_date, $end_date, $latitude, $longitude)) {
       echo json_encode(["message" => "Trip created successfully."]);
     } else {
@@ -515,7 +516,6 @@ switch ($action) {
 
   case 'get_messages':
     $message = new Message($db);
-
     $data = extractRawJSON();
 
     // Check if the decoding was successful
@@ -524,12 +524,10 @@ switch ($action) {
       exit;
     }
 
-    $group_id = $data['group_id'] ?? null;
-    // $user_id = $data['user_id'] ?? null;
-    // $message = $data['message'] ?? null;
+    $group_id = $data['group_id'];
 
     if ($group_id === null) {
-      echo json_encode(['status' => 'error', 'message' => 'Missing user_id parameter']);
+      echo json_encode(['status' => 'error', 'message' => 'Missing group_id parameter']);
       exit;
     }
 

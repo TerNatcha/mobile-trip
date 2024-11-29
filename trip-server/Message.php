@@ -36,9 +36,9 @@ class Message
     public function getMessagesByGroup($groupId)
     {
         try {
-            $sql = "SELECT m.id, m.user_id, u.name AS user_name, m.message, m.created_at
+            $sql = "SELECT m.id, m.user_id, u.username, m.message, m.created_at
                     FROM messages m
-                    JOIN users u ON m.user_id = u.id
+                    LEFT JOIN users u ON m.user_id = u.id
                     WHERE m.group_id = :group_id
                     ORDER BY m.created_at ASC";
             $stmt = $this->conn->prepare($sql);
