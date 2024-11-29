@@ -18,7 +18,7 @@ class ChatRoomPage extends StatefulWidget {
 }
 
 class _ChatRoomPageState extends State<ChatRoomPage> {
-  List<Map<String, String>> messages = [];
+  List<Map< String, String>> messages = [];
   List<Map<String, String>> trips = []; // Store available trips
   TextEditingController messageController = TextEditingController();
   String? tripId;
@@ -52,12 +52,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       );
 
       if (response.statusCode == 200) {
+        print(response.body);
         final List<dynamic> data = jsonDecode(response.body);
 
         setState(() {
           messages = data
               .map((msg) => {
-                    'user': msg['user'] as String,
+                
+                    'user': msg['username'] as String,
                     'message': msg['message'] as String,
                   })
               .toList();
@@ -115,15 +117,15 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           body: jsonEncode({
             'group_id': widget.groupId,
             'message': formattedMessage,
-            'user_id': userId,
-          }),
-        );
+            'user_id': userId
+      });
 
         print({
           'group_id': widget.groupId,
           'message': formattedMessage,
           'user_id': userId,
         });
+
         if (response.statusCode == 200) {
           setState(() {
             messages.add({'user': 'Me', 'message': message});
