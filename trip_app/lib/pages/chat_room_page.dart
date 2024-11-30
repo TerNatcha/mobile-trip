@@ -155,8 +155,33 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
   }
 
-  Future<void> joinTrip(String tripId) async {
-    // Call API to join trip
+  // Future<void> joinTrip(String tripId) async {
+  //   // Call API to join trip
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(
+  //           'https://www.yasupada.com/mobiletrip/api.php?action=join_trip'),
+  //       headers: {'Content-Type': 'application/json; charset=UTF-8'},
+  //       body: jsonEncode({
+  //         'trip_id': tripId,
+  //         'user_id': userId,
+  //       }),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       print('Successfully joined the trip');
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Joined trip successfully!')),
+  //       );
+  //     } else {
+  //       print('Failed to join trip');
+  //     }
+  //   } catch (e) {
+  //     print('Error: $e');
+  //   }
+  // }
+
+  Future<void> joinTrip(String tripId, String startDate, String endDate) async {
     try {
       final response = await http.post(
         Uri.parse(
@@ -164,20 +189,26 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({
           'trip_id': tripId,
-          'user_id': userId,
+          'user_id': userId, // Assuming userId is already fetched
+          'start_date': startDate,
+          'end_date': endDate,
         }),
       );
 
       if (response.statusCode == 200) {
-        print('Successfully joined the trip');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Joined trip successfully!')),
+          const SnackBar(content: Text('Successfully joined the trip!')),
         );
       } else {
-        print('Failed to join trip');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to join the trip.')),
+        );
       }
     } catch (e) {
       print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred.')),
+      );
     }
   }
 
@@ -241,6 +272,87 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     );
   }
 
+  void _showTripDetailsDialog(String tripId) async {
+    // Fetch trip details from the server (e.g., title, start_date, end_date)
+    final response = await http.post(
+      Uri.parse(
+          'https://www.yasupada.com/mobiletrip/api.php?action=get_trip_details'),
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({'trip_id': tripId}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      // Extract trip details
+      String tripTitle = data['title'];
+      String tripStartDate = data['start_date'];
+      String tripEndDate = data['end_date'];
+
+      // Create date controllers
+      TextEditingController startDateController = TextEditingController();
+      TextEditingController endDateController = TextEditingController();
+
+      // Show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Trip: $tripTitle'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Start Date: $tripStartDate'),
+                Text('End Date: $tripEndDate'),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: startDateController,
+                  decoration:
+                      const InputDecoration(labelText: 'Select Start Date'),
+                ),
+                TextField(
+                  controller: endDateController,
+                  decoration:
+                      const InputDecoration(labelText: 'Select End Date'),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  String selectedStartDate = startDateController.text.trim();
+                  String selectedEndDate = endDateController.text.trim();
+
+                  if (selectedStartDate.isNotEmpty &&
+                      selectedEndDate.isNotEmpty) {
+                    joinTrip(tripId, selectedStartDate, selectedEndDate);
+                  } else {
+                    // Show a warning if fields are empty
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please select dates!')),
+                    );
+                  }
+                },
+                child: const Text('Join Trip'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to fetch trip details.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -270,7 +382,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     // Handle trip detail showing
                     if (message['message']!.startsWith('1:')) {
                       String tripId = message['message']!.split(':')[1];
-                      _showTripDetails(tripId);
+                      // _showTripDetails(tripId);
+                      _showTripDetailsDialog(tripId);
                     }
                   },
                   child: Align(
