@@ -260,7 +260,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
-                  joinTrip(tripId);
+                  //joinTrip(tripId);
                   Navigator.of(context).pop();
                 },
                 child: const Text('Join Trip'),
@@ -278,20 +278,19 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       Uri.parse(
           'https://www.yasupada.com/mobiletrip/api.php?action=get_trip&trip_id=$tripId'),
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
-      //body: jsonEncode({'trip_id': tripId}),
+      body: jsonEncode({'trip_id': tripId}),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
       // Extract trip details
-      String tripTitle = data['title'];
+      String tripTitle = data['name'];
       String tripStartDate = data['start_date'];
       String tripEndDate = data['end_date'];
 
-      // Create date controllers
-      TextEditingController startDateController = TextEditingController();
-      TextEditingController endDateController = TextEditingController();
+      DateTime? selectedStartDate;
+      DateTime? selectedEndDate;
 
       // Show the dialog
       showDialog(
@@ -302,18 +301,64 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Start Date: $tripStartDate'),
-                Text('End Date: $tripEndDate'),
+                Text('Trip Start Date: $tripStartDate'),
+                Text('Trip End Date: $tripEndDate'),
                 const SizedBox(height: 10),
-                TextField(
-                  controller: startDateController,
-                  decoration:
-                      const InputDecoration(labelText: 'Select Start Date'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Start Date:'),
+                    TextButton(
+                      onPressed: () async {
+                        selectedStartDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime.now(), // Only future dates
+                          lastDate: DateTime.parse(tripEndDate),
+                        );
+
+                        if (selectedStartDate != null) {
+                          (context as Element).markNeedsBuild(); // Update UI
+                        }
+                      },
+                      child: Text(
+                        selectedStartDate != null
+                            ? selectedStartDate!
+                                .toLocal()
+                                .toString()
+                                .split(' ')[0]
+                            : 'Select Date',
+                      ),
+                    ),
+                  ],
                 ),
-                TextField(
-                  controller: endDateController,
-                  decoration:
-                      const InputDecoration(labelText: 'Select End Date'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('End Date:'),
+                    TextButton(
+                      onPressed: () async {
+                        selectedEndDate = await showDatePicker(
+                          context: context,
+                          initialDate: selectedStartDate ?? DateTime.now(),
+                          firstDate: selectedStartDate ?? DateTime.now(),
+                          lastDate: DateTime.parse(tripEndDate),
+                        );
+
+                        if (selectedEndDate != null) {
+                          (context as Element).markNeedsBuild(); // Update UI
+                        }
+                      },
+                      child: Text(
+                        selectedEndDate != null
+                            ? selectedEndDate!
+                                .toLocal()
+                                .toString()
+                                .split(' ')[0]
+                            : 'Select Date',
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -326,16 +371,17 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  String selectedStartDate = startDateController.text.trim();
-                  String selectedEndDate = endDateController.text.trim();
-
-                  if (selectedStartDate.isNotEmpty &&
-                      selectedEndDate.isNotEmpty) {
-                    joinTrip(tripId, selectedStartDate, selectedEndDate);
+                  if (selectedStartDate != null && selectedEndDate != null) {
+                    joinTrip(
+                      tripId,
+                      selectedStartDate!.toIso8601String(),
+                      selectedEndDate!.toIso8601String(),
+                    );
+                    Navigator.of(context).pop(); // Close dialog
                   } else {
-                    // Show a warning if fields are empty
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please select dates!')),
+                      const SnackBar(
+                          content: Text('Please select both dates!')),
                     );
                   }
                 },
@@ -417,7 +463,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                               onPressed: () {
                                 String tripId =
                                     message['message']!.split(':')[1];
-                                joinTrip(tripId);
+                                //joinTrip(tripId);
+                                _showTripDetailsDialog(tripId);
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
