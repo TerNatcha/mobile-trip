@@ -196,6 +196,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       );
 
       if (response.statusCode == 200) {
+        print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Successfully joined the trip!')),
         );
@@ -425,12 +426,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
                 return GestureDetector(
                   onTap: () {
-                    // Handle trip detail showing
-                    if (message['message']!.startsWith('1:')) {
-                      String tripId = message['message']!.split(':')[1];
-                      // _showTripDetails(tripId);
-                      _showTripDetailsDialog(tripId);
-                    }
+                    // // Handle trip detail showing
+                    // if (message['message']!.startsWith('1')) {
+                    //   String tripId = message['message']!.split(':')[1];
+                    //   print('xxxx$tripId');
+                    //   // _showTripDetails(tripId);
+                    //   //_showTripDetailsDialog(tripId);
+                    // }
                   },
                   child: Align(
                     alignment:
@@ -463,7 +465,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                               onPressed: () {
                                 String tripId =
                                     message['message']!.split(':')[1];
-                                //joinTrip(tripId);
+
                                 _showTripDetailsDialog(tripId);
                               },
                               style: ElevatedButton.styleFrom(
