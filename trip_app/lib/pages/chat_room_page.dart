@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import 'package:trip_app/pages/trip_info_page.dart';
+
 class ChatRoomPage extends StatefulWidget {
   final String groupName;
   final String groupId;
@@ -302,7 +304,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                               onPressed: () {
                                 String tripId =
                                     message['message']!.split(':')[1];
-                                // _joinTrip(tripId);
+                                joinTrip(tripId);
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
@@ -312,6 +314,21 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                 ),
                               ),
                               child: const Text('Join Trip'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                String tripId2 =
+                                    message['message']!.split(':')[1];
+                                TripInfoPage(key: null, tripId: tripId2);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.green, // Set button color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                              child: const Text('Trip Info'),
                             ),
                           ],
                         ],
