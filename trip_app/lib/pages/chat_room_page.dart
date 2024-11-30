@@ -122,10 +122,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         );
 
         if (response.statusCode == 200) {
-          setState(() {
-            messages.add({'user': username!, 'message': message});
-            messageController.clear();
-          });
+          // setState(() {
+          //   messages.add({'user': username!, 'message': message});
+          //
+          // });
+          messageController.clear();
+          fetchMessages();
         } else {
           print('Failed to send message');
           // Use SnackBar to show error message
