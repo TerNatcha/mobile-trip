@@ -18,11 +18,12 @@ class ChatRoomPage extends StatefulWidget {
 }
 
 class _ChatRoomPageState extends State<ChatRoomPage> {
-  List<Map< String, String>> messages = [];
+  List<Map<String, String>> messages = [];
   List<Map<String, String>> trips = []; // Store available trips
   TextEditingController messageController = TextEditingController();
   String? tripId;
   String? userId;
+  String? username;
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       userId = prefs.getString('user_id'); // Adjust key as needed
+      username = prefs.getString('username');
     });
   }
 
@@ -52,13 +54,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       );
 
       if (response.statusCode == 200) {
-        print(response.body);
         final List<dynamic> data = jsonDecode(response.body);
 
         setState(() {
           messages = data
               .map((msg) => {
-                
                     'user': msg['username'] as String,
                     'message': msg['message'] as String,
                   })
@@ -117,18 +117,18 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           body: jsonEncode({
             'group_id': widget.groupId,
             'message': formattedMessage,
-            'user_id': userId
-      });
+            'user_id': userId,
+          }),
+        );
 
         print({
           'group_id': widget.groupId,
           'message': formattedMessage,
           'user_id': userId,
         });
-
         if (response.statusCode == 200) {
           setState(() {
-            messages.add({'user': 'Me', 'message': message});
+            messages.add({'user': username!, 'message': message});
             messageController.clear();
           });
         } else {
@@ -252,7 +252,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 var message = messages[index];
-                bool isMe = message['user'] == 'Me';
+                print(message['message']);
+                bool isMe = message['user'] == username;
 
                 return GestureDetector(
                   onTap: () {
@@ -274,7 +275,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       child: Text(
-                        '${message['user']}: ${message['message']}',
+                        isMe
+                            ? 'Me: ${message['message']}'
+                            : '${message['user']}: ${message['message']}',
                         style: TextStyle(
                             color: isMe ? Colors.white : Colors.black),
                       ),
