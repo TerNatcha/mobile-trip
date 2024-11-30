@@ -182,7 +182,7 @@ switch ($action) {
     $user_id = $data['user_id'];
     $start_date = $data['start_date'];
     $end_date = $data['end_date'];
-    print_r($data);
+
     if ($trip->joinTrip($trip_id, $user_id, $start_date, $end_date)) {
       echo json_encode(["message" => "Join Trip successfully."]);
     } else {

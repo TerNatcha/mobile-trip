@@ -91,6 +91,7 @@ class Trip
 
     public function joinTrip($trip_id, $user_id, $start_date, $end_date)
     {
+
         // Check if a record already exists
         $checkQuery = "SELECT COUNT(*) as count FROM " . $this->trip_participants . " 
                    WHERE trip_id = :trip_id AND user_id = :user_id";
@@ -100,7 +101,7 @@ class Trip
         $checkStmt->bindParam(':user_id', $user_id);
         $checkStmt->execute();
         $row = $checkStmt->fetch(PDO::FETCH_ASSOC);
-        print($row['count']);
+
         if ($row['count'] > 0) {
             // Update the existing record
             $updateQuery = "UPDATE " . $this->trip_participants . " 
