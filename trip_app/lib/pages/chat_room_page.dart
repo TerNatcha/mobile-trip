@@ -341,8 +341,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                         selectedEndDate = await showDatePicker(
                           context: context,
                           initialDate: selectedStartDate ?? DateTime.now(),
-                          firstDate: selectedStartDate ?? DateTime.now(),
-                          lastDate: DateTime.parse(tripEndDate),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
                         );
 
                         if (selectedEndDate != null) {
