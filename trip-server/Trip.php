@@ -100,7 +100,7 @@ class Trip
         $checkStmt->bindParam(':user_id', $user_id);
         $checkStmt->execute();
         $row = $checkStmt->fetch(PDO::FETCH_ASSOC);
-
+        print($row['count']);
         if ($row['count'] > 0) {
             // Update the existing record
             $updateQuery = "UPDATE " . $this->trip_participants . " 

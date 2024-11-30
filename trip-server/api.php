@@ -179,10 +179,11 @@ switch ($action) {
     }
 
     $trip_id = $data['trip_id'];
-
+    $user_id = $data['user_id'];
     $start_date = $data['start_date'];
     $end_date = $data['end_date'];
-    if ($trip->joinTrip($trip_id, $name, $destination, $start_date, $end_date, $latitude, $longitude)) {
+    print_r($data);
+    if ($trip->joinTrip($trip_id, $user_id, $start_date, $end_date)) {
       echo json_encode(["message" => "Join Trip successfully."]);
     } else {
       echo json_encode(["message" => "Failed to join trip."]);
