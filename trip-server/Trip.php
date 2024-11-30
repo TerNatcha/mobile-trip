@@ -10,6 +10,8 @@ class Trip
 
     private $events_table = "trip_events"; // Table for trip events
 
+    private $trip_participants = "trip_participants";
+
     public function __construct($db)
     {
         $this->conn = $db;
@@ -87,6 +89,71 @@ class Trip
         return false;
     }
 
+    public function joinTrip($trip_id, $user_id, $start_date, $end_date)
+    {
+        // Check if a record already exists
+        $checkQuery = "SELECT COUNT(*) as count FROM " . $this->trip_participants . " 
+                   WHERE trip_id = :trip_id AND user_id = :user_id";
+        $checkStmt = $this->conn->prepare($checkQuery);
+
+        $checkStmt->bindParam(':trip_id', $trip_id);
+        $checkStmt->bindParam(':user_id', $user_id);
+        $checkStmt->execute();
+        $row = $checkStmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row['count'] > 0) {
+            // Update the existing record
+            $updateQuery = "UPDATE " . $this->trip_participants . " 
+                        SET start_date = :start_date, end_date = :end_date 
+                        WHERE trip_id = :trip_id AND user_id = :user_id";
+            $updateStmt = $this->conn->prepare($updateQuery);
+
+            $updateStmt->bindParam(':trip_id', $trip_id);
+            $updateStmt->bindParam(':user_id', $user_id);
+            $updateStmt->bindParam(':start_date', $start_date);
+            $updateStmt->bindParam(':end_date', $end_date);
+
+            if ($updateStmt->execute()) {
+                return true; // Record updated successfully
+            }
+        } else {
+            // Insert a new record
+            $insertQuery = "INSERT INTO " . $this->trip_participants . " 
+                        (trip_id, user_id, start_date, end_date) 
+                        VALUES (:trip_id, :user_id, :start_date, :end_date)";
+            $insertStmt = $this->conn->prepare($insertQuery);
+
+            $insertStmt->bindParam(':trip_id', $trip_id);
+            $insertStmt->bindParam(':user_id', $user_id);
+            $insertStmt->bindParam(':start_date', $start_date);
+            $insertStmt->bindParam(':end_date', $end_date);
+
+            if ($insertStmt->execute()) {
+                return true; // Record inserted successfully
+            }
+        }
+
+        return false; // If both operations fail
+    }
+
+    public function unjoinTrip($trip_id, $user_id)
+    {
+        // Prepare the DELETE query
+        $query = "DELETE FROM " . $this->trip_participants . " WHERE trip_id = :trip_id AND user_id = :user_id";
+        $stmt = $this->conn->prepare($query);
+
+        // Bind parameters
+        $stmt->bindParam(':trip_id', $trip_id);
+        $stmt->bindParam(':user_id', $user_id);
+
+        // Execute the query
+        if ($stmt->execute()) {
+            return true; // Successfully removed the user from the trip
+        }
+
+        return false; // Failed to remove the user
+    }
+
     public function deleteTrip($trip_id)
     {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = :trip_id";
@@ -96,6 +163,7 @@ class Trip
         if ($stmt->execute()) {
             return true;
         }
+
         return false;
     }
 

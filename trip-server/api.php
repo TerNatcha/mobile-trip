@@ -167,6 +167,49 @@ switch ($action) {
     }
     break;
 
+  case 'join_trip':
+    $trip = new Trip($db);
+
+    $data = extractRawJSON();
+
+    // Check if the decoding was successful
+    if ($data === null) {
+      echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+      exit;
+    }
+
+    $trip_id = $data['trip_id'];
+
+    $start_date = $data['start_date'];
+    $end_date = $data['end_date'];
+    if ($trip->joinTrip($trip_id, $name, $destination, $start_date, $end_date, $latitude, $longitude)) {
+      echo json_encode(["message" => "Join Trip successfully."]);
+    } else {
+      echo json_encode(["message" => "Failed to join trip."]);
+    }
+    break;
+
+  case 'unjoin_trip':
+    $trip = new Trip($db);
+
+    $data = extractRawJSON();
+
+    // Check if the decoding was successful
+    if ($data === null) {
+      echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+      exit;
+    }
+
+    $trip_id = $data['trip_id'];
+    $user_id = $data['user_id'];
+
+    if ($trip->unjoinTrip($trip_id, $user_id)) {
+      echo json_encode(["message" => "Un-Join Trip successfully."]);
+    } else {
+      echo json_encode(["message" => "Failed to un-join trip."]);
+    }
+    break;
+
     // Trip Event Management
   case 'create_event':
     $trip = new Trip($db);
