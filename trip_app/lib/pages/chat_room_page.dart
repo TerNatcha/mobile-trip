@@ -112,7 +112,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     String message = messageController.text.trim();
     if (message.isNotEmpty) {
       String formattedMessage =
-          tripId != null ? '1:${tripId!}\n$message' : '0:$message';
+          tripId != null ? '1:${tripId!}:$message' : '0:$message';
       tripId = null;
       try {
         if (userId == null) {
