@@ -193,6 +193,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     setState(() {
                       tripId = trip['trip_id'];
                     });
+                    messageController.text = trip['trip_name'];
                     // Call sendMessage to submit the selected tripId with the message
                     sendMessage();
                     Navigator.of(context).pop();
