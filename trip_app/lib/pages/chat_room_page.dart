@@ -21,6 +21,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   List<Map<String, String>> messages = [];
   List<Map<String, String>> trips = []; // Store available trips
   TextEditingController messageController = TextEditingController();
+  ScrollController scrollController = ScrollController();
   String? tripId;
   String? userId;
   String? username;
@@ -63,6 +64,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     'message': msg['message'] as String,
                   })
               .toList();
+        });
+
+        // Scroll to the bottom after sending a message
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (scrollController.hasClients) {
+            scrollController.jumpTo(scrollController.position.maxScrollExtent);
+          }
         });
       } else {
         // Handle error
@@ -247,6 +255,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         children: [
           Expanded(
             child: ListView.builder(
+              controller: scrollController,
               padding: const EdgeInsets.all(8.0),
               itemCount: messages.length,
               itemBuilder: (context, index) {
