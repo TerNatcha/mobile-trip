@@ -188,8 +188,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     setState(() {
                       tripId = trip['trip_id'];
                     });
+
                     messageController.text = trip['trip_name'] ?? '';
-                    // Call sendMessage to submit the selected tripId with the message
+
                     sendMessage();
                     Navigator.of(context).pop();
                   },
@@ -253,7 +254,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
                 return GestureDetector(
                   onTap: () {
-                    // Assuming the message contains trip details
+                    // Handle trip detail showing
                     if (message['message']!.startsWith('1:')) {
                       String tripId = message['message']!.split(':')[1];
                       _showTripDetails(tripId);
@@ -270,12 +271,39 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                         color: isMe ? Colors.blueAccent : Colors.grey[300],
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      child: Text(
-                        isMe
-                            ? 'Me: ${message['message']}'
-                            : '${message['user']}: ${message['message']}',
-                        style: TextStyle(
-                            color: isMe ? Colors.white : Colors.black),
+                      child: Column(
+                        crossAxisAlignment: isMe
+                            ? CrossAxisAlignment.end
+                            : CrossAxisAlignment.start,
+                        children: [
+                          // Show message text for normal messages or trip messages
+                          Text(
+                            isMe
+                                ? 'Me: ${message['message']}'
+                                : '${message['user']}: ${message['message']}',
+                            style: TextStyle(
+                                color: isMe ? Colors.white : Colors.black),
+                          ),
+                          // Add a button if it's a trip message
+                          if (message['message']!.startsWith('1:')) ...[
+                            const SizedBox(height: 8.0),
+                            ElevatedButton(
+                              onPressed: () {
+                                String tripId =
+                                    message['message']!.split(':')[1];
+                                // _joinTrip(tripId);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.green, // Set button color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                              child: const Text('Join Trip'),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                   ),
