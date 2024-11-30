@@ -313,8 +313,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                         selectedStartDate = await showDatePicker(
                           context: context,
                           initialDate: DateTime.now(),
-                          firstDate: DateTime.now(), // Only future dates
-                          lastDate: DateTime.parse(tripEndDate),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
                         );
 
                         if (selectedStartDate != null) {
