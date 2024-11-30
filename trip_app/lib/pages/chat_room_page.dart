@@ -276,9 +276,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     // Fetch trip details from the server (e.g., title, start_date, end_date)
     final response = await http.post(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=get_trip_details'),
+          'https://www.yasupada.com/mobiletrip/api.php?action=get_trip&trip_id=$tripId'),
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
-      body: jsonEncode({'trip_id': tripId}),
+      //body: jsonEncode({'trip_id': tripId}),
     );
 
     if (response.statusCode == 200) {
