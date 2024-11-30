@@ -121,11 +121,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           }),
         );
 
-        print({
-          'group_id': widget.groupId,
-          'message': formattedMessage,
-          'user_id': userId,
-        });
         if (response.statusCode == 200) {
           setState(() {
             messages.add({'user': username!, 'message': message});
@@ -193,7 +188,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     setState(() {
                       tripId = trip['trip_id'];
                     });
-                    messageController.text = trip['trip_name'];
+                    messageController.text = trip['trip_name'] ?? '';
                     // Call sendMessage to submit the selected tripId with the message
                     sendMessage();
                     Navigator.of(context).pop();
@@ -253,7 +248,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 var message = messages[index];
-                print(message['message']);
+
                 bool isMe = message['user'] == username;
 
                 return GestureDetector(
