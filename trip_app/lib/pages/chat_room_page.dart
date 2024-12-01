@@ -412,6 +412,17 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                               subtitle: Text(
                                 'Start: ${participant['start_date']}\nEnd: ${participant['end_date']}',
                               ),
+                              trailing: IconButton(
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () {
+                                  _confirmUnjoinTrip(
+                                    context,
+                                    tripId,
+                                    participant['user_id'],
+                                  );
+                                },
+                              ),
                             );
                           },
                         ),
@@ -428,6 +439,63 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         );
       },
     );
+  }
+
+  void _confirmUnjoinTrip(BuildContext context, String tripId, String userId) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Confirm Un-Join'),
+          content: const Text('Are you sure you want to remove this user?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close confirmation dialog
+                _unjoinTrip(context, tripId, userId);
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _unjoinTrip(
+      BuildContext context, String tripId, String userId) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'https://yasupada.com/mobiletrip/api.php?action=unjoin_trip&trip_id=$tripId&user_id=$userId'),
+      );
+
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.body);
+        if (result['message'] == "Un-Join Trip successfully.") {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('User removed from trip successfully.')),
+          );
+
+          // Refresh the dialog content by closing and reopening
+          Navigator.pop(context); // Close the current dialog
+          _showTripInfoDialog(context, tripId); // Reopen dialog
+        } else {
+          throw Exception(result['message']);
+        }
+      } else {
+        throw Exception('Failed to unjoin trip.');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 
   Future<List<Map<String, dynamic>>> _fetchJoinedTripUsers(
