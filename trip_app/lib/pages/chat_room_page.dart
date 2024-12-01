@@ -155,32 +155,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
   }
 
-  // Future<void> joinTrip(String tripId) async {
-  //   // Call API to join trip
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(
-  //           'https://www.yasupada.com/mobiletrip/api.php?action=join_trip'),
-  //       headers: {'Content-Type': 'application/json; charset=UTF-8'},
-  //       body: jsonEncode({
-  //         'trip_id': tripId,
-  //         'user_id': userId,
-  //       }),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       print('Successfully joined the trip');
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text('Joined trip successfully!')),
-  //       );
-  //     } else {
-  //       print('Failed to join trip');
-  //     }
-  //   } catch (e) {
-  //     print('Error: $e');
-  //   }
-  // }
-
   Future<void> joinTrip(String tripId, String startDate, String endDate) async {
     try {
       final response = await http.post(
@@ -425,15 +399,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 bool isMe = message['user'] == username;
 
                 return GestureDetector(
-                  onTap: () {
-                    // // Handle trip detail showing
-                    // if (message['message']!.startsWith('1')) {
-                    //   String tripId = message['message']!.split(':')[1];
-                    //   print('xxxx$tripId');
-                    //   // _showTripDetails(tripId);
-                    //   //_showTripDetailsDialog(tripId);
-                    // }
-                  },
+                  onTap: () {},
                   child: Align(
                     alignment:
                         isMe ? Alignment.centerRight : Alignment.centerLeft,
