@@ -140,7 +140,7 @@ class Trip
     public function joinedTripUsers($trip_id)
     {
         // Check if a record already exists
-        $checkQuery = "SELECT u.username, tp.id,tp.user_id,tp.trip_id,tp.start_date,tp.end_date FROM (" . $this->trip_participants . " tp INNER JOIN users u ON tp.user_id = u.id) INNER JOIN trip t ON tp.trip_id = t.id  WHERE tp.trip_id = :trip_id ";
+        $checkQuery = "SELECT u.username, tp.id,tp.user_id,tp.trip_id,tp.start_date,tp.end_date FROM (" . $this->trip_participants . " tp INNER JOIN users u ON tp.user_id = u.id) INNER JOIN trips t ON tp.trip_id = t.id  WHERE tp.trip_id = :trip_id ";
         $checkStmt = $this->conn->prepare($checkQuery);
 
         $checkStmt->bindParam(':trip_id', $trip_id);

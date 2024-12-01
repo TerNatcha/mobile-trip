@@ -196,13 +196,12 @@ switch ($action) {
     $data = extractRawJSON();
 
     // Check if the decoding was successful
-    if ($data === null) {
-      echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
-      exit;
-    }
+    // if ($data === null) {
+    //   echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+    //   exit;
+    // }
 
-    $trip_id = $data['trip_id'];
-    $trip_id = $data['trip_id'];
+    $trip_id = $_REQUEST['trip_id'];
     echo json_encode($trip->joinedTripUsers($trip_id));
 
     break;
