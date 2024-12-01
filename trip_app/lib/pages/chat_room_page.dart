@@ -374,6 +374,78 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
   }
 
+  void _showTripInfoDialog(BuildContext context, String tripId) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: _fetchJoinedTripUsers(tripId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return AlertDialog(
+                title: const Text('Error'),
+                content: const Text('Failed to load trip details.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Close'),
+                  ),
+                ],
+              );
+            } else {
+              final tripParticipants = snapshot.data ?? [];
+              return AlertDialog(
+                title: Text('Trip Info (ID: $tripId)'),
+                content: tripParticipants.isEmpty
+                    ? const Text('No participants found for this trip.')
+                    : SizedBox(
+                        width: double.maxFinite,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: tripParticipants.length,
+                          itemBuilder: (context, index) {
+                            final participant = tripParticipants[index];
+                            return ListTile(
+                              title: Text('User: ${participant['username']}'),
+                              subtitle: Text(
+                                'Start: ${participant['start_date']}\nEnd: ${participant['end_date']}',
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Close'),
+                  ),
+                ],
+              );
+            }
+          },
+        );
+      },
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchJoinedTripUsers(
+      String tripId) async {
+    final response = await http.post(
+      Uri.parse(
+          'https://yasupada.com/mobiletrip/api.php?action=joined_trip_users'),
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({'trip_id': tripId}),
+    );
+
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to fetch trip participants');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -445,9 +517,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                             ),
                             ElevatedButton(
                               onPressed: () {
-                                String tripId2 =
+                                String tripId =
                                     message['message']!.split(':')[1];
-                                TripInfoPage(key: null, tripId: tripId2);
+                                _showTripInfoDialog(context, tripId);
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
