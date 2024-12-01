@@ -57,8 +57,11 @@ class Group
             $sql = "SELECT g.id, g.name,g.description FROM groups g
                     
                     WHERE g.owner_id = :user_id";
+
+            $sql = "SELECT g.id, g.name,g.description FROM groups g ";
+
             $stmt = $this->conn->prepare($sql);
-            $stmt->bindParam(':user_id', $userId);
+            // $stmt->bindParam(':user_id', $userId);
             $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

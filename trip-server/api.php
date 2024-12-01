@@ -190,6 +190,23 @@ switch ($action) {
     }
     break;
 
+  case 'joined_trip_users':
+    $trip = new Trip($db);
+
+    $data = extractRawJSON();
+
+    // Check if the decoding was successful
+    if ($data === null) {
+      echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+      exit;
+    }
+
+    $trip_id = $data['trip_id'];
+    $trip_id = $data['trip_id'];
+    echo json_encode($trip->joinedTripUsers($trip_id));
+
+    break;
+
   case 'unjoin_trip':
     $trip = new Trip($db);
 
