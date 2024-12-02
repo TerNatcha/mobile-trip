@@ -13,13 +13,18 @@ class TripInfoPage extends StatefulWidget {
   _TripInfoPageState createState() => _TripInfoPageState();
 }
 
-class _TripInfoPageState extends State<TripInfoPage> {
+class _TripInfoPageState extends State<TripInfoPage>
+    with SingleTickerProviderStateMixin {
   Map<String, dynamic>? tripDetails;
+  List<dynamic>? joinedUsers;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     fetchTripDetails();
+    fetchJoinedUsers();
   }
 
   Future<void> fetchTripDetails() async {
@@ -43,6 +48,27 @@ class _TripInfoPageState extends State<TripInfoPage> {
     }
   }
 
+  Future<void> fetchJoinedUsers() async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'https://www.yasupada.com/mobiletrip/api.php?action=get_joined_users&trip_id=${widget.tripId}'),
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode({'trip_id': widget.tripId}),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          joinedUsers = jsonDecode(response.body)['users'];
+        });
+      } else {
+        print('Failed to fetch joined users');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   Future<void> deleteTrip() async {
     try {
       final response = await http.post(
@@ -53,7 +79,6 @@ class _TripInfoPageState extends State<TripInfoPage> {
       );
 
       if (response.statusCode == 200) {
-        // After deletion, navigate back or show a success message
         Navigator.pop(context);
       } else {
         print('Failed to delete trip');
@@ -64,7 +89,6 @@ class _TripInfoPageState extends State<TripInfoPage> {
   }
 
   void editTrip() {
-    // Navigate to the create_trip_page in edit mode by sending the tripId
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -79,6 +103,13 @@ class _TripInfoPageState extends State<TripInfoPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Trip Details'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Details'),
+            Tab(text: 'Joined Users'),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -101,7 +132,7 @@ class _TripInfoPageState extends State<TripInfoPage> {
                     TextButton(
                       onPressed: () {
                         deleteTrip();
-                        Navigator.pop(context); // Close the dialog
+                        Navigator.pop(context);
                       },
                       child: const Text('Delete'),
                     ),
@@ -112,41 +143,59 @@ class _TripInfoPageState extends State<TripInfoPage> {
           ),
         ],
       ),
-      body: tripDetails == null
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TripDetailItem(
-                    label: 'Trip Name:',
-                    value: tripDetails!['name'] ?? 'N/A',
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          tripDetails == null
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TripDetailItem(
+                        label: 'Trip Name:',
+                        value: tripDetails!['name'] ?? 'N/A',
+                      ),
+                      TripDetailItem(
+                        label: 'Destination:',
+                        value: tripDetails!['destination'] ?? 'N/A',
+                      ),
+                      TripDetailItem(
+                        label: 'Start Date:',
+                        value: tripDetails!['start_date'] ?? 'N/A',
+                      ),
+                      TripDetailItem(
+                        label: 'End Date:',
+                        value: tripDetails!['end_date'] ?? 'N/A',
+                      ),
+                      const SizedBox(height: 20),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Action for adding activities or notes
+                          },
+                          child: const Text('Add Activities or Notes'),
+                        ),
+                      ),
+                    ],
                   ),
-                  TripDetailItem(
-                    label: 'Destination:',
-                    value: tripDetails!['destination'] ?? 'N/A',
-                  ),
-                  TripDetailItem(
-                    label: 'Start Date:',
-                    value: tripDetails!['start_date'] ?? 'N/A',
-                  ),
-                  TripDetailItem(
-                    label: 'End Date:',
-                    value: tripDetails!['end_date'] ?? 'N/A',
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Perform action when button is pressed
-                      },
-                      child: const Text('Add Activities or Notes'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+          joinedUsers == null
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                  itemCount: joinedUsers!.length,
+                  itemBuilder: (context, index) {
+                    final user = joinedUsers![index];
+                    return ListTile(
+                      title: Text(user['username'] ?? 'Unknown'),
+                      subtitle: Text(
+                          'Start: ${user['start_date'] ?? 'N/A'}, End: ${user['end_date'] ?? 'N/A'}'),
+                    );
+                  },
+                ),
+        ],
+      ),
     );
   }
 }
