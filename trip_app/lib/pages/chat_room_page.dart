@@ -397,7 +397,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             } else {
               final tripParticipants = snapshot.data ?? [];
               return AlertDialog(
-                title: Text('Trip Info (ID: $tripId)'),
+                title: Text('Friend Free Time:'),
                 content: tripParticipants.isEmpty
                     ? const Text('No participants found for this trip.')
                     : SizedBox(
@@ -410,7 +410,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                             return ListTile(
                               title: Text('User: ${participant['username']}'),
                               subtitle: Text(
-                                'Start: ${participant['start_date']}\nEnd: ${participant['end_date']}',
+                                'From: ${participant['start_date']} - ${participant['end_date']}',
                               ),
                               trailing: IconButton(
                                 icon:
