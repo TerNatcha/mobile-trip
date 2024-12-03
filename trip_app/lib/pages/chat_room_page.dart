@@ -529,35 +529,52 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      searchQuery = value;
-                      // Simulate search logic
-                      searchResults = _searchUsernames(searchQuery);
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    hintText: 'Enter username',
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value;
+                        // Simulate search logic
+                        searchResults = _searchUsernames(searchQuery);
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Enter username',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      prefixIcon: const Icon(Icons.search),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
-                SizedBox(
-                  height: 150, // Define the height of the list view
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: searchResults.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(searchResults[index]),
-                        onTap: () {
-                          _inviteUserToGroup(searchResults[index]);
-                          Navigator.pop(context); // Close the dialog
-                        },
-                      );
-                    },
+                if (searchResults.isEmpty)
+                  const Text('No users found',
+                      style: TextStyle(color: Colors.grey)),
+                if (searchResults.isNotEmpty)
+                  SizedBox(
+                    height: 150, // Limit the height of the list
+                    child: ListView.separated(
+                      itemCount: searchResults.length,
+                      separatorBuilder: (_, __) =>
+                          const Divider(height: 1, color: Colors.grey),
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: CircleAvatar(
+                            child: Text(searchResults[index][0].toUpperCase()),
+                          ),
+                          title: Text(searchResults[index]),
+                          trailing: Icon(Icons.person_add,
+                              color: Theme.of(context).primaryColor),
+                          onTap: () {
+                            _inviteUserToGroup(searchResults[index]);
+                            Navigator.pop(context); // Close the dialog
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -566,62 +583,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showSearchDialog2() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String searchQuery = '';
-        List<String> searchResults = []; // Replace with real user data
-
-        return AlertDialog(
-          title: const Text('Search User'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                onChanged: (value) {
-                  setState(() {
-                    searchQuery = value;
-                    // Simulate search logic
-                    searchResults = _searchUsernames(searchQuery);
-                  });
-                },
-                decoration: const InputDecoration(
-                  hintText: 'Enter username',
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 150, // Define the height of the list view
-                child: ListView.builder(
-                  itemCount: searchResults.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(searchResults[index]),
-                      onTap: () {
-                        _inviteUserToGroup(searchResults[index]);
-                        Navigator.pop(context); // Close the dialog
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Close'),
+              child: const Text('Cancel'),
             ),
           ],
         );
