@@ -525,6 +525,64 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
         return AlertDialog(
           title: const Text('Search User'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      searchQuery = value;
+                      // Simulate search logic
+                      searchResults = _searchUsernames(searchQuery);
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    hintText: 'Enter username',
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 150, // Define the height of the list view
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: searchResults.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(searchResults[index]),
+                        onTap: () {
+                          _inviteUserToGroup(searchResults[index]);
+                          Navigator.pop(context); // Close the dialog
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSearchDialog2() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String searchQuery = '';
+        List<String> searchResults = []; // Replace with real user data
+
+        return AlertDialog(
+          title: const Text('Search User'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
