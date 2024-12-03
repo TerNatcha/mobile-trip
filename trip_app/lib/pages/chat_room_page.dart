@@ -541,21 +541,21 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              // Expanded(
-              //   child: ListView.builder(
-              //     shrinkWrap: true,
-              //     itemCount: searchResults.length,
-              //     itemBuilder: (context, index) {
-              //       return ListTile(
-              //         title: Text(searchResults[index]),
-              //         onTap: () {
-              //           _inviteUserToGroup(searchResults[index]);
-              //           Navigator.pop(context); // Close the dialog
-              //         },
-              //       );
-              //     },
-              //   ),
-              // ),
+              SizedBox(
+                height: 150, // Define the height of the list view
+                child: ListView.builder(
+                  itemCount: searchResults.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(searchResults[index]),
+                      onTap: () {
+                        _inviteUserToGroup(searchResults[index]);
+                        Navigator.pop(context); // Close the dialog
+                      },
+                    );
+                  },
+                ),
+              ),
             ],
           ),
           actions: [
