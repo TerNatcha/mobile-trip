@@ -516,6 +516,77 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
   }
 
+  void _showSearchDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String searchQuery = '';
+        List<String> searchResults = []; // Replace with real user data
+
+        return AlertDialog(
+          title: const Text('Search User'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value;
+                    // Simulate search logic
+                    searchResults = _searchUsernames(searchQuery);
+                  });
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Enter username',
+                ),
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: searchResults.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(searchResults[index]),
+                      onTap: () {
+                        _inviteUserToGroup(searchResults[index]);
+                        Navigator.pop(context); // Close the dialog
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  List<String> _searchUsernames(String query) {
+    // Replace with your actual user search logic or API call
+    List<String> allUsers = ['Test1', 'Test2', 'Test3']; // Example data
+    return allUsers
+        .where(
+            (username) => username.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+  }
+
+  void _inviteUserToGroup(String username) {
+    // Replace with your API or backend logic to invite the user
+    print('Inviting $username to the group');
+    // Example: Call your backend API
+    // _groupService.inviteUserToGroup(widget.groupId, username);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -525,6 +596,10 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           IconButton(
             icon: const Icon(Icons.trip_origin),
             onPressed: _showTripSelectionDialog,
+          ),
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: _showSearchDialog,
           ),
         ],
       ),
