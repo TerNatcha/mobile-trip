@@ -397,7 +397,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             } else {
               final tripParticipants = snapshot.data ?? [];
               return AlertDialog(
-                title: Text('Friend Free Time:'),
+                title: const Text('Friend Free Time:'),
                 content: tripParticipants.isEmpty
                     ? const Text('No participants found for this trip.')
                     : SizedBox(
@@ -412,17 +412,19 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                               subtitle: Text(
                                 'From: ${participant['start_date']} - ${participant['end_date']}',
                               ),
-                              trailing: IconButton(
-                                icon:
-                                    const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () {
-                                  _confirmUnjoinTrip(
-                                    context,
-                                    tripId,
-                                    participant['user_id'],
-                                  );
-                                },
-                              ),
+                              trailing: participant['user_id'] == userId
+                                  ? IconButton(
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                      onPressed: () {
+                                        _confirmUnjoinTrip(
+                                          context,
+                                          tripId,
+                                          participant['user_id'],
+                                        );
+                                      },
+                                    )
+                                  : null,
                             );
                           },
                         ),
