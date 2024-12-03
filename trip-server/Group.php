@@ -35,7 +35,7 @@ class Group
     public function inviteUserToGroup($groupId, $userId)
     {
         try {
-            $sql = "INSERT INTO group_users (group_id, user_id) VALUES (:group_id, :user_id)";
+            $sql = "INSERT INTO group_members (group_id, user_id) VALUES (:group_id, :user_id)";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':group_id', $groupId);
             $stmt->bindParam(':user_id', $userId);
@@ -49,6 +49,26 @@ class Group
             return false;
         }
     }
+
+    // Method to remove a user from a group
+    public function removeUserFromGroup($groupId, $userId)
+    {
+        try {
+            $sql = "DELETE FROM group_members WHERE group_id = :group_id AND user_id = :user_id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':group_id', $groupId);
+            $stmt->bindParam(':user_id', $userId);
+            $stmt->execute();
+
+            return true;
+        } catch (PDOException $e) {
+            // Log the error
+            error_log("Error removing user from group: " . $e->getMessage());
+
+            return false;
+        }
+    }
+
 
     // Method to get a list of groups
     public function getGroups($userId)
@@ -95,8 +115,8 @@ class Group
     public function getUsersInGroup($groupId)
     {
         try {
-            $sql = "SELECT u.id, u.name, u.email FROM users u
-                    JOIN group_users gu ON u.id = gu.user_id
+            $sql = "SELECT u.id, u.username, u.email FROM users u
+                    JOIN group_members gu ON u.id = gu.user_id
                     WHERE gu.group_id = :group_id";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':group_id', $groupId);

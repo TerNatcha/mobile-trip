@@ -209,16 +209,16 @@ switch ($action) {
   case 'unjoin_trip':
     $trip = new Trip($db);
 
-    $data = extractRawJSON();
+    // $data = extractRawJSON();
 
-    // Check if the decoding was successful
-    if ($data === null) {
-      echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
-      exit;
-    }
+    // // Check if the decoding was successful
+    // if ($data === null) {
+    //   echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+    //   exit;
+    // }
 
-    $trip_id = $data['trip_id'];
-    $user_id = $data['user_id'];
+    $trip_id = $_REQUEST['trip_id'];
+    $user_id = $_REQUEST['user_id'];
 
     if ($trip->unjoinTrip($trip_id, $user_id)) {
       echo json_encode(["message" => "Un-Join Trip successfully."]);
@@ -473,6 +473,31 @@ switch ($action) {
       echo json_encode(["message" => "User invited successfully."]);
     } else {
       echo json_encode(["message" => "Failed to invite user."]);
+    }
+    break;
+
+  case 'remove_user_from_group':
+    $data = extractRawJSON();
+
+    // Check if the decoding was successful
+    if ($data === null) {
+      echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+      exit;
+    }
+
+    // Retrieve 'group_id' and 'user_id' from the data
+    $group_id = $data['group_id'];
+    $user_id = $data['user_id'];
+
+    // Add logic to handle the user invitation
+    // This may involve interacting with a database or sending notifications
+    // For demonstration purposes, let's assume we're adding the user to the group
+    $group = new Group($db);
+
+    if ($group->removeUserFromGroup($group_id, $user_id)) {
+      echo json_encode(["message" => "User remove successfully."]);
+    } else {
+      echo json_encode(["message" => "Failed to remove user."]);
     }
     break;
 
