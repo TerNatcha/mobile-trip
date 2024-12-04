@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import 'package:trip_app/pages/trip_info_page.dart';
+import 'package:trip_app/pages/search_user_page.dart';
 
 class ChatRoomPage extends StatefulWidget {
   final String groupName;
@@ -652,7 +653,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           ),
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: _showSearchDialog,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchUserPage(groupId: widget.groupId),
+                ),
+              );
+            },
           ),
         ],
       ),
