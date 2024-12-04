@@ -70,9 +70,43 @@ class _SearchUserPageState extends State<SearchUserPage> {
     }
   }
 
-  void _inviteUserToGroup(String userId) {
-    // Logic to invite user to group
-    print('Inviting user with ID: $userId');
+  void _inviteUserToGroup(String userId) async {
+    final String apiUrl =
+        'https://yasupada.com/mobiletrip/api.php?action=invite_user&user_id=$userId&group_id=${widget.groupId}';
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data['message'] == "User invited successfully.") {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('User invited successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context); // Close the page after inviting
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(data['message'] ?? 'Unexpected response.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        throw Exception('Failed to invite user');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error inviting user: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
