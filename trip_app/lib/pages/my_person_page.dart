@@ -135,11 +135,25 @@ class _MyPersonPageState extends State<MyPersonPage> {
     });
   }
 
+  // Logout and clear user data
+  Future<void> _logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all stored data
+    Navigator.pushReplacementNamed(context, '/login'); // Navigate to login page
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Personal Information'),
+        actions: [
+          IconButton(
+            onPressed: _logout,
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
