@@ -657,7 +657,10 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SearchUserPage(groupId: widget.groupId),
+                  builder: (context) => SearchUserPage(
+                      key: null,
+                      groupName: widget.groupName,
+                      groupId: widget.groupId),
                 ),
               );
             },
