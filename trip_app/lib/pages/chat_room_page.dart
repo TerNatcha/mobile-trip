@@ -517,27 +517,58 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   }
 
   void _showSearchDialog() {
+    String searchQuery = '';
+    List<dynamic> searchResults = [];
+    bool isLoading = false;
+
+    Future<void> _searchUsernames(String query) async {
+      if (query.isEmpty) {
+        searchResults = [];
+        return;
+      }
+
+      try {
+        isLoading = true;
+        final response = await http.get(Uri.parse(
+            'https://yasupada.com/mobiletrip/api.php?action=search_users&query=$query'));
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          if (data['status'] == 'success') {
+            searchResults = data['data'];
+          } else {
+            searchResults = [];
+          }
+        } else {
+          searchResults = [];
+          throw Exception('Failed to fetch users');
+        }
+      } catch (e) {
+        print('Error: $e');
+        searchResults = [];
+      } finally {
+        isLoading = false;
+      }
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String searchQuery = '';
-        List<String> searchResults = []; // Replace with real user data
-
-        return AlertDialog(
-          title: const Text('Search User'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: TextField(
-                    onChanged: (value) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Search User'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    onChanged: (value) async {
                       setState(() {
                         searchQuery = value;
-                        // Simulate search logic
-                        searchResults = _searchUsernames(searchQuery);
                       });
+
+                      await _searchUsernames(searchQuery);
+                      setState(() {}); // Update the UI with new results
                     },
                     decoration: InputDecoration(
                       hintText: 'Enter username',
@@ -547,65 +578,67 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                       prefixIcon: const Icon(Icons.search),
                     ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                if (searchResults.isEmpty)
-                  const Text('No users found',
-                      style: TextStyle(color: Colors.grey)),
-                if (searchResults.isNotEmpty)
-                  SizedBox(
-                    height: 150, // Limit the height of the list
-                    child: ListView.separated(
-                      itemCount: searchResults.length,
-                      separatorBuilder: (_, __) =>
-                          const Divider(height: 1, color: Colors.grey),
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: CircleAvatar(
-                            child: Text(searchResults[index][0].toUpperCase()),
-                          ),
-                          title: Text(searchResults[index]),
-                          trailing: Icon(Icons.person_add,
-                              color: Theme.of(context).primaryColor),
-                          onTap: () {
-                            _inviteUserToGroup(searchResults[index]);
-                            Navigator.pop(context); // Close the dialog
-                          },
-                        );
-                      },
+                  const SizedBox(height: 10),
+                  if (isLoading)
+                    const CircularProgressIndicator()
+                  else if (searchResults.isEmpty)
+                    const Text('No users found',
+                        style: TextStyle(color: Colors.grey))
+                  else
+                    SizedBox(
+                      height: 150, // Limit the height of the list
+                      child: ListView.separated(
+                        itemCount: searchResults.length,
+                        separatorBuilder: (_, __) =>
+                            const Divider(height: 1, color: Colors.grey),
+                        itemBuilder: (context, index) {
+                          final user = searchResults[index];
+                          return ListTile(
+                            leading: CircleAvatar(
+                              child: Text(user['username'][0].toUpperCase()),
+                            ),
+                            title: Text(user['username']),
+                            subtitle: Text(user['email']),
+                            trailing: Icon(Icons.person_add,
+                                color: Theme.of(context).primaryColor),
+                            onTap: () {
+                              _inviteUserToGroup(user['id']);
+                              Navigator.pop(context); // Close the dialog
+                            },
+                          );
+                        },
+                      ),
                     ),
-                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancel'),
+                ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
   }
 
-  List<String> _searchUsernames(String query) {
-    // Replace with your actual user search logic or API call
-    List<String> allUsers = ['Test1', 'Test2', 'Test3']; // Example data
-    return allUsers
-        .where(
-            (username) => username.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+  void _inviteUserToGroup(String userId) {
+    // Logic to invite user to group goes here.
+    print('Inviting user with ID: $userId');
   }
 
-  void _inviteUserToGroup(String username) {
-    // Replace with your API or backend logic to invite the user
-    print('Inviting $username to the group');
-    // Example: Call your backend API
-    // _groupService.inviteUserToGroup(widget.groupId, username);
-  }
+  // List<String> _searchUsernames(String query) {
+  //   // Replace with your actual user search logic or API call
+  //   List<String> allUsers = ['Test1', 'Test2', 'Test3']; // Example data
+  //   return allUsers
+  //       .where(
+  //           (username) => username.toLowerCase().contains(query.toLowerCase()))
+  //       .toList();
+  // }
 
   @override
   Widget build(BuildContext context) {
