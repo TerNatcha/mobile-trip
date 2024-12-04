@@ -52,7 +52,7 @@ class _TripInfoPageState extends State<TripInfoPage>
     try {
       final response = await http.post(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=get_joined_users&trip_id=${widget.tripId}'),
+            'https://www.yasupada.com/mobiletrip/api.php?action=joined_trip_users&trip_id=${widget.tripId}'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({'trip_id': widget.tripId}),
       );
