@@ -74,11 +74,9 @@ class Group
     public function getGroups($userId)
     {
         try {
-            $sql = "SELECT g.id, g.name,g.description FROM groups g
-                    
-                    WHERE g.owner_id = :user_id";
+            //$sql = "SELECT g.id, g.name,g.description FROM groups g WHERE g.owner_id = :user_id";
 
-            // $sql = "SELECT g.id, g.name,g.description FROM groups g ";
+            $sql = "SELECT  DISTINCT g.id, g.name,g.description FROM ((groups g  INNER JOIN group_members gm ON gm.group_id = g.id) INNER JOIN users u ON gm.user_id = u.id) WHERE (g.owner_id = :user_id or gm.user_id = :user_id);";
 
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':user_id', $userId);
