@@ -1,46 +1,59 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class SearchUserPage extends StatefulWidget {
-  final int groupId;
-
-  const SearchUserPage({super.key, required this.groupId});
-
   @override
   _SearchUserPageState createState() => _SearchUserPageState();
 }
 
 class _SearchUserPageState extends State<SearchUserPage> {
-  final _searchController = TextEditingController();
-  List users = [];
+  String searchQuery = '';
+  List<dynamic> searchResults = [];
   bool isLoading = false;
+  int currentPage = 1;
+  bool hasMore = true;
 
-  Future<void> _searchUsers(String query) async {
-    setState(() {
-      isLoading = true;
-    });
+  final PageController _pageController = PageController();
+
+  Future<void> _searchUsernames(String query, {int page = 1}) async {
+    if (query.isEmpty) {
+      setState(() {
+        searchResults = [];
+        hasMore = false;
+      });
+      return;
+    }
 
     try {
-      final response = await http.get(
-        Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=search_users&query=$query'),
-      );
+      setState(() {
+        isLoading = true;
+      });
+
+      final response = await http.get(Uri.parse(
+          'https://yasupada.com/mobiletrip/api.php?action=search_users&query=$query&page=$page'));
 
       if (response.statusCode == 200) {
-        setState(() {
-          users = json.decode(response.body);
-        });
+        final data = jsonDecode(response.body);
+        if (data['status'] == 'success' && data['data'] != null) {
+          setState(() {
+            if (page == 1) {
+              searchResults = data['data'];
+            } else {
+              searchResults.addAll(data['data']);
+            }
+            hasMore = data['data'].length > 0;
+          });
+        } else {
+          setState(() {
+            hasMore = false;
+          });
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to load users')),
-        );
+        throw Exception('Failed to fetch users');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('An error occurred while searching for users')),
-      );
+      print('Error: $e');
     } finally {
       setState(() {
         isLoading = false;
@@ -48,68 +61,88 @@ class _SearchUserPageState extends State<SearchUserPage> {
     }
   }
 
-  Future<void> _inviteUser(int userId) async {
-    final response = await http.post(
-      Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=invite_user'),
-      body: {
-        'group_id': widget.groupId.toString(),
-        'user_id': userId.toString(),
-      },
-    );
-
-    final responseBody = json.decode(response.body);
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(responseBody['message'])),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Failed to invite user: ${responseBody['message']}')),
-      );
-    }
+  void _inviteUserToGroup(String userId) {
+    // Logic to invite user to group
+    print('Inviting user with ID: $userId');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search Users'),
+        title: const Text('Search User'),
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(8.0),
             child: TextField(
-              controller: _searchController,
+              onChanged: (value) {
+                searchQuery = value;
+                currentPage = 1;
+                _searchUsernames(searchQuery, page: currentPage);
+              },
               decoration: InputDecoration(
-                labelText: 'Search Users',
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () => _searchUsers(_searchController.text),
+                hintText: 'Enter username',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
+                prefixIcon: const Icon(Icons.search),
               ),
             ),
           ),
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Expanded(
-                  child: ListView.builder(
-                    itemCount: users.length,
+          if (isLoading)
+            const Expanded(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+          else if (searchResults.isEmpty)
+            const Expanded(
+              child: Center(
+                child: Text(
+                  'No users found',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (page) {
+                  if (hasMore && page == currentPage - 1) {
+                    currentPage++;
+                    _searchUsernames(searchQuery, page: currentPage);
+                  }
+                },
+                itemCount: (searchResults.length / 10).ceil(),
+                itemBuilder: (context, pageIndex) {
+                  final pageResults =
+                      searchResults.skip(pageIndex * 10).take(10).toList();
+
+                  return ListView.separated(
+                    itemCount: pageResults.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (context, index) {
-                      final user = users[index];
+                      final user = pageResults[index];
                       return ListTile(
-                        title: Text(user['name']),
-                        subtitle: Text(user['email']),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.send),
-                          onPressed: () => _inviteUser(user['id']),
+                        leading: CircleAvatar(
+                          child: Text(user['username'][0].toUpperCase()),
                         ),
+                        title: Text(user['username']),
+                        subtitle: Text(user['email']),
+                        trailing: Icon(Icons.person_add,
+                            color: Theme.of(context).primaryColor),
+                        onTap: () {
+                          _inviteUserToGroup(user['id']);
+                        },
                       );
                     },
-                  ),
-                ),
+                  );
+                },
+              ),
+            ),
         ],
       ),
     );
