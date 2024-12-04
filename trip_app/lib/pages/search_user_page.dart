@@ -3,6 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class SearchUserPage extends StatefulWidget {
+  final String groupName;
+  final String groupId;
+
+  const SearchUserPage({
+    super.key,
+    required this.groupName,
+    required this.groupId,
+  });
+
   @override
   _SearchUserPageState createState() => _SearchUserPageState();
 }
