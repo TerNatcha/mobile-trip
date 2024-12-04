@@ -455,14 +455,14 @@ switch ($action) {
     $data = extractRawJSON();
 
     // Check if the decoding was successful
-    if ($data === null) {
-      echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
-      exit;
-    }
+    // if ($data === null) {
+    //   echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+    //   exit;
+    // }
 
     // Retrieve 'group_id' and 'user_id' from the data
-    $group_id = $data['group_id'];
-    $user_id = $data['user_id'];
+    $group_id = $_REQUEST['group_id'];
+    $user_id = $_REQUEST['user_id'];
 
     // Add logic to handle the user invitation
     // This may involve interacting with a database or sending notifications
