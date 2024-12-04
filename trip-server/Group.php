@@ -136,13 +136,14 @@ class Group
     {
         try {
             $query = "%{$query}%";
-            $sql = "SELECT id, name, email FROM users WHERE name LIKE :query";
+            $sql = "SELECT id, username, email FROM users WHERE username LIKE :query";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':query', $query);
             $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
+            print($e->getMessage());
             // Log the error
             error_log("Error searching users: " . $e->getMessage());
 
