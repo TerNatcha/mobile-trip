@@ -20,12 +20,25 @@ class Group
             $stmt->bindParam(':description', $description);
             $stmt->execute();
 
+            $this->inviteUserToGroup($this->getLastInsertId(), $ownerId);
+
             return true;
         } catch (PDOException $e) {
             // Log the error message
             error_log("Error creating group: " . $e->getMessage());
 
             // Return false or a custom error message
+            return false;
+        }
+    }
+
+    public function getLastInsertId()
+    {
+        try {
+            return $this->conn->lastInsertId();
+        } catch (PDOException $e) {
+            // Log the error message
+            error_log("Error retrieving last insert ID: " . $e->getMessage());
             return false;
         }
     }
