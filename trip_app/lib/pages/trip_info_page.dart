@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart'; // For LatLng coordinates
+
 import 'package:trip_app/pages/create_trip_page.dart';
 
 class TripInfoPage extends StatefulWidget {
@@ -18,6 +21,10 @@ class _TripInfoPageState extends State<TripInfoPage>
   Map<String, dynamic>? tripDetails;
   List<dynamic>? joinedUsers;
   late TabController _tabController;
+
+  LatLng?
+      selectedLocation; // For the selected latitude and longitude from the map
+  List<Marker> markers = [];
 
   @override
   void initState() {
@@ -39,6 +46,25 @@ class _TripInfoPageState extends State<TripInfoPage>
       if (response.statusCode == 200) {
         setState(() {
           tripDetails = jsonDecode(response.body);
+          final data = json.decode(response.body);
+          selectedLocation = LatLng(
+              double.parse(data['latitude']), double.parse(data['longitude']));
+
+          markers.clear();
+
+          // Add a new marker at the tapped location
+          markers.add(
+            Marker(
+              point: selectedLocation!,
+              width: 80.0,
+              height: 80.0,
+              child: const Icon(
+                Icons.location_pin,
+                color: Colors.red,
+                size: 40.0,
+              ),
+            ),
+          );
         });
       } else {
         print('Failed to fetch trip details');
@@ -169,13 +195,28 @@ class _TripInfoPageState extends State<TripInfoPage>
                         label: 'End Date:',
                         value: tripDetails!['end_date'] ?? 'N/A',
                       ),
-                      const SizedBox(height: 20),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Action for adding activities or notes
-                          },
-                          child: const Text('Add Activities or Notes'),
+                      SizedBox(
+                        height: 300,
+                        child: FlutterMap(
+                          options: MapOptions(
+                            initialCenter: selectedLocation!,
+                            initialZoom: 14.0,
+                          ),
+                          children: [
+                            TileLayer(
+                              // Display map tiles from any source
+                              urlTemplate:
+                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
+                              userAgentPackageName: 'com.example.app',
+                              maxNativeZoom:
+                                  19, // Scale tiles when the server doesn't support higher zoom levels
+                              // And many more recommended properties!
+                            ),
+                            MarkerLayer(
+                              markers:
+                                  markers, // Display all markers in the list
+                            ),
+                          ],
                         ),
                       ),
                     ],
