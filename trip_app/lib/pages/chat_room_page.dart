@@ -654,7 +654,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             onPressed: _showTripSelectionDialog,
           ),
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: const Icon(Icons.add_to_photos),
             onPressed: () {
               Navigator.push(
                 context,
