@@ -262,6 +262,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
       // Extract trip details
       String tripTitle = data['name'];
+      String tripDesc = data['description'];
       String tripStartDate = data['start_date'];
       String tripEndDate = data['end_date'];
 
@@ -277,6 +278,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Text('Detail Trip: $tripDesc'),
                 Text('Trip Start Date: $tripStartDate'),
                 Text('Trip End Date: $tripEndDate'),
                 const SizedBox(height: 10),

@@ -184,7 +184,7 @@ class _TripInfoPageState extends State<TripInfoPage>
                         value: tripDetails!['name'] ?? 'N/A',
                       ),
                       TripDetailItem(
-                        label: 'Destination:',
+                        label: 'Detail Trip:',
                         value: tripDetails!['destination'] ?? 'N/A',
                       ),
                       TripDetailItem(

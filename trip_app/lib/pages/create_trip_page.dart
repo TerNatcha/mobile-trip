@@ -122,14 +122,14 @@ class _CreateTripPageState extends State<CreateTripPage> {
 
   void _onMapTap(BuildContext context, LatLng latlng) {
     setState(() {
-    markers.clear();
+      markers.clear();
       selectedLocation = latlng; // Update the selected location
       // Add a new marker at the tapped location
       markers.add(
         Marker(
           point: latlng,
           width: 80.0,
-          height: 80.0, 
+          height: 80.0,
           child: const Icon(
             Icons.location_pin,
             color: Colors.red,
@@ -138,12 +138,12 @@ class _CreateTripPageState extends State<CreateTripPage> {
         ),
       );
     });
-    
 
     // Show a snackbar with the tapped location
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("Tapped location: Latitude: ${latlng.latitude}, Longitude: ${latlng.longitude}"),
+        content: Text(
+            "Tapped location: Latitude: ${latlng.latitude}, Longitude: ${latlng.longitude}"),
         duration: Duration(seconds: 2),
       ),
     );
@@ -187,10 +187,10 @@ class _CreateTripPageState extends State<CreateTripPage> {
               ),
               TextFormField(
                 controller: _destinationController,
-                decoration: const InputDecoration(labelText: 'Destination'),
+                decoration: const InputDecoration(labelText: 'Detail Trip'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a destination';
+                    return 'Please enter a detail trip';
                   }
                   return null;
                 },
@@ -237,8 +237,8 @@ class _CreateTripPageState extends State<CreateTripPage> {
                     initialCenter: const LatLng(
                         13.7563, 100.5018), // Default map center (Bangkok)
                     initialZoom: 13.0,
-                       onTap: (tapPosition, latlng) => _onMapTap(context, latlng), // Pass context and latlng to the tap handler
-       
+                    onTap: (tapPosition, latlng) => _onMapTap(context,
+                        latlng), // Pass context and latlng to the tap handler
                   ),
                   children: [
                     TileLayer(
@@ -249,11 +249,10 @@ class _CreateTripPageState extends State<CreateTripPage> {
                       maxNativeZoom:
                           19, // Scale tiles when the server doesn't support higher zoom levels
                       // And many more recommended properties!
-                    ), 
-                    
-                      MarkerLayer(
-            markers: markers, // Display all markers in the list
-          ),
+                    ),
+                    MarkerLayer(
+                      markers: markers, // Display all markers in the list
+                    ),
                   ],
                 ),
               ),

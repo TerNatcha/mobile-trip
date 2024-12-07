@@ -13,11 +13,17 @@ class TripListPage extends StatefulWidget {
 class _TripListPageState extends State<TripListPage> {
   List trips = [];
   bool isLoading = true;
+  String? userId;
 
   @override
   void initState() {
     super.initState();
     _fetchTrips();
+  }
+
+  Future<void> _saveTrip() async {
+    final prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString('user_id');
   }
 
   Future<void> _fetchTrips() async {
@@ -28,7 +34,7 @@ class _TripListPageState extends State<TripListPage> {
     try {
       final response = await http.get(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=get_trips'),
+            'https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$userId'),
       );
 
       if (response.statusCode == 200) {
