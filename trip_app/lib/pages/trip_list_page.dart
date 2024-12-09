@@ -18,6 +18,7 @@ class _TripListPageState extends State<TripListPage> {
   @override
   void initState() {
     super.initState();
+    _saveTrip();
     _fetchTrips();
   }
 
@@ -38,6 +39,7 @@ class _TripListPageState extends State<TripListPage> {
       );
 
       if (response.statusCode == 200) {
+        print(response.body);
         setState(() {
           trips = json.decode(response.body);
           isLoading = false;
