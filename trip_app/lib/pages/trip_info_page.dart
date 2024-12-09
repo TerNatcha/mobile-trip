@@ -85,8 +85,9 @@ class _TripInfoPageState extends State<TripInfoPage>
       );
 
       if (response.statusCode == 200) {
+        print(response.body);
         setState(() {
-          joinedUsers = jsonDecode(response.body)['users'];
+          joinedUsers = jsonDecode(response.body);
         });
       } else {
         print('Failed to fetch joined users');
