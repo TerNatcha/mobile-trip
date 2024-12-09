@@ -79,7 +79,7 @@ class Trip
 
         if ($user_id != "") {
             //$query = "SELECT * FROM " . $this->table_name . " WHERE user_id = :user_id";
-            $query = "SELECT t.* FROM ((`trips` t inner join trip_participants tp on t.user_id = tp.user_id) inner join users u on u.id = tp.user_id) WHERE tp.user_id = :user_id;";
+            $query = "SELECT distinct t.* FROM ((`trips` t inner join trip_participants tp on t.user_id = tp.user_id) inner join users u on u.id = tp.user_id) WHERE tp.user_id = :user_id;";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':user_id', $user_id);
         }
@@ -91,13 +91,9 @@ class Trip
 
     public function getTrip($trip_id)
     {
-
-
         $query = "SELECT * FROM " . $this->table_name . " WHERE id = :trip_id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':trip_id', $trip_id);
-
-
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
