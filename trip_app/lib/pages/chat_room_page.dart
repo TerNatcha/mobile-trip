@@ -140,10 +140,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         );
 
         if (response.statusCode == 200) {
-          // setState(() {
-          //   messages.add({'user': username!, 'message': message});
-          //
-          // });
           messageController.clear();
           fetchMessages();
         } else {
@@ -178,7 +174,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       );
 
       if (response.statusCode == 200) {
-        print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Successfully joined the trip!')),
         );
@@ -224,32 +219,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 );
               },
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showTripDetails(String tripId) {
-    // Show trip details with join option
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Trip Details'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Trip ID: $tripId'),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  //joinTrip(tripId);
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Join Trip'),
-              ),
-            ],
           ),
         );
       },
@@ -636,20 +605,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       },
     );
   }
-
-  void _inviteUserToGroup(String userId) {
-    // Logic to invite user to group goes here.
-    print('Inviting user with ID: $userId');
-  }
-
-  // List<String> _searchUsernames(String query) {
-  //   // Replace with your actual user search logic or API call
-  //   List<String> allUsers = ['Test1', 'Test2', 'Test3']; // Example data
-  //   return allUsers
-  //       .where(
-  //           (username) => username.toLowerCase().contains(query.toLowerCase()))
-  //       .toList();
-  // }
 
   @override
   Widget build(BuildContext context) {
