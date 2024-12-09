@@ -55,7 +55,37 @@ class _GroupExpendPage extends State<GroupExpendPage> {
             trailing: IconButton(
               icon: const Icon(Icons.attach_money),
               onPressed: () {
-                // เพิ่มฟังก์ชันแสดงรายละเอียดการจ่ายเงินของผู้ใช้นี้
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Payment Details for ${user['username']}'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                              'Total Expenditure: \$${user['total_expenditure'] ?? 0}'),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              // เพิ่มฟังก์ชันสำหรับเพิ่มหรือปรับปรุงรายการจ่ายเงิน
+                              Navigator.pop(context); // ปิด Dialog
+                            },
+                            child: const Text('Add Payment'),
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context); // ปิด Dialog
+                          },
+                          child: const Text('Close'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
             ),
           );
@@ -64,6 +94,7 @@ class _GroupExpendPage extends State<GroupExpendPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // เพิ่มฟังก์ชันเพื่อเพิ่มรายการค่าใช้จ่ายใหม่
+          addExpenditure();
         },
         child: const Icon(Icons.add),
       ),
@@ -72,6 +103,8 @@ class _GroupExpendPage extends State<GroupExpendPage> {
 }
 
 class AddExpenditureDialog extends StatefulWidget {
+  const AddExpenditureDialog({super.key});
+
   @override
   _AddExpenditureDialogState createState() => _AddExpenditureDialogState();
 }
