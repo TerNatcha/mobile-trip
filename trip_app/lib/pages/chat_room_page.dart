@@ -86,6 +86,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   Future<void> fetchAvailableTrips() async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        userId = prefs.getString('user_id'); // Adjust key as needed
+        username = prefs.getString('username');
+      });
+
       final response = await http.get(
         Uri.parse(
             'https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$userId'),
@@ -98,6 +104,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               .map((trip) => {
                     'trip_id': trip['id'].toString(),
                     'trip_name': trip['name'].toString(),
+                    'trip_destination': trip['destination'].toString(),
                   })
               .toList();
         });
@@ -203,6 +210,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 var trip = trips[index];
                 return ListTile(
                   title: Text(trip['trip_name'] ?? ''),
+                  subtitle: Text(trip['trip_destination'] ?? ''),
                   onTap: () {
                     setState(() {
                       tripId = trip['trip_id'];
@@ -262,7 +270,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
       // Extract trip details
       String tripTitle = data['name'];
-      String tripDesc = data['description'];
+      String tripDesc = data['destination'];
       String tripStartDate = data['start_date'];
       String tripEndDate = data['end_date'];
 
