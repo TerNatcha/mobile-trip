@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'calendar_page.dart';
+import 'group_list_page.dart';
+import 'my_person_page.dart';
 import 'trip_info_page.dart';
 import 'trip_list_page.dart';
-import 'group_list_page.dart';
-import 'calendar_page.dart';
-import 'my_person_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TabBasePage extends StatefulWidget {
   const TabBasePage({super.key});
@@ -79,7 +80,7 @@ class _TabBasePageState extends State<TabBasePage> {
                   TripListPage(),
                   GroupListPage(userId: userId),
                   const CalendarPage(),
-                  MyPersonPage() // Pass the user_id to MyPersonPage
+                  const MyPersonPage()
                 ],
               );
             } else {
