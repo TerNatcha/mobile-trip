@@ -32,9 +32,42 @@ class Trip
         $stmt->bindParam(':longitude', $longitude);
 
         if ($stmt->execute()) {
+            $trip_id = $this->getLastInsertId();
+            $this->ownerToTrip($trip_id, $user_id);
+
             return true;
         }
         return false;
+    }
+
+    public function getLastInsertId()
+    {
+        try {
+            return $this->conn->lastInsertId();
+        } catch (PDOException $e) {
+            // Log the error message
+            error_log("Error retrieving last insert ID: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Method to invite a user to a group
+    public function ownerToTrip($tripId, $userId)
+    {
+        try {
+            $sql = "INSERT INTO trip_participants (trip_id, user_id) VALUES (:trip_id, :user_id)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':trip_id', $tripId);
+            $stmt->bindParam(':user_id', $userId);
+            $stmt->execute();
+
+            return true;
+        } catch (PDOException $e) {
+            // Log the error
+            error_log("Error inviting user to group: " . $e->getMessage());
+
+            return false;
+        }
     }
 
     public function getTrips($user_id)
