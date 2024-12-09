@@ -582,7 +582,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                             trailing: Icon(Icons.person_add,
                                 color: Theme.of(context).primaryColor),
                             onTap: () {
-                              _inviteUserToGroup(user['id']);
                               Navigator.pop(context); // Close the dialog
                             },
                           );
