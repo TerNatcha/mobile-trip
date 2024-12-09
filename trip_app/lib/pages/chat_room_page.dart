@@ -88,7 +88,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     try {
       final response = await http.get(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=get_trips'),
+            'https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$userId'),
       );
 
       if (response.statusCode == 200) {
