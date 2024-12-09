@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart'; // For LatLng coordinates
 
 import 'package:trip_app/pages/create_trip_page.dart';
+import 'package:trip_app/pages/group_expend_page.dart';
 
 class TripInfoPage extends StatefulWidget {
   final String tripId;
@@ -217,6 +218,23 @@ class _TripInfoPageState extends State<TripInfoPage>
                                   markers, // Display all markers in the list
                             ),
                           ],
+                        ),
+                      ),
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GroupExpendPage(
+                                  joinedUsers: joinedUsers ?? [],
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Icon(Icons.group),
                         ),
                       ),
                     ],
