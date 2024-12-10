@@ -9,7 +9,7 @@ import 'package:trip_app/pages/create_trip_page.dart';
 import 'package:trip_app/pages/group_expend_page.dart';
 
 class TripInfoPage extends StatefulWidget {
-  final String tripId;
+  final String? tripId;
 
   const TripInfoPage({super.key, required this.tripId});
 
@@ -197,30 +197,33 @@ class _TripInfoPageState extends State<TripInfoPage>
                         label: 'End Date:',
                         value: tripDetails!['end_date'] ?? 'N/A',
                       ),
-                      SizedBox(
-                        height: 300,
-                        child: FlutterMap(
-                          options: MapOptions(
-                            initialCenter: selectedLocation!,
-                            initialZoom: 14.0,
+                      if (selectedLocation != null &&
+                          selectedLocation!.latitude != 0 &&
+                          selectedLocation!.longitude != 0)
+                        SizedBox(
+                          height: 300,
+                          child: FlutterMap(
+                            options: MapOptions(
+                              initialCenter: selectedLocation!,
+                              initialZoom: 14.0,
+                            ),
+                            children: [
+                              TileLayer(
+                                // Display map tiles from any source
+                                urlTemplate:
+                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
+                                userAgentPackageName: 'com.example.app',
+                                maxNativeZoom:
+                                    19, // Scale tiles when the server doesn't support higher zoom levels
+                                // And many more recommended properties!
+                              ),
+                              MarkerLayer(
+                                markers:
+                                    markers, // Display all markers in the list
+                              ),
+                            ],
                           ),
-                          children: [
-                            TileLayer(
-                              // Display map tiles from any source
-                              urlTemplate:
-                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
-                              userAgentPackageName: 'com.example.app',
-                              maxNativeZoom:
-                                  19, // Scale tiles when the server doesn't support higher zoom levels
-                              // And many more recommended properties!
-                            ),
-                            MarkerLayer(
-                              markers:
-                                  markers, // Display all markers in the list
-                            ),
-                          ],
                         ),
-                      ),
                       Positioned(
                         top: 16,
                         right: 16,
