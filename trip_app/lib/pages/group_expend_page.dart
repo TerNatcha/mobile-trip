@@ -142,16 +142,16 @@ class AddExpenditureDialog extends StatefulWidget {
 
 class _AddExpenditureDialogState extends State<AddExpenditureDialog> {
   final _formKey = GlobalKey<FormState>();
-  String _selectedUserId = '';
+  final Map<String, bool> _selectedUsers = {};
   String _description = '';
   double _amount = 0.0;
 
   @override
   void initState() {
     super.initState();
-    if (widget.joinedUsers.isNotEmpty) {
-      _selectedUserId =
-          widget.joinedUsers[0]['id']; // Default to the first user
+    // Initialize selectedUsers map with default values (false for all)
+    for (var user in widget.joinedUsers) {
+      _selectedUsers[user['id']] = false;
     }
   }
 
@@ -164,25 +164,34 @@ class _AddExpenditureDialogState extends State<AddExpenditureDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            DropdownButtonFormField<String>(
-              value: _selectedUserId,
-              items: widget.joinedUsers
-                  .map<DropdownMenuItem<String>>((user) => DropdownMenuItem(
-                        value: user['id'],
-                        child: Text(user['username']),
-                      ))
-                  .toList(),
-              onChanged: (value) => setState(() {
-                _selectedUserId = value!;
-              }),
-              decoration: const InputDecoration(labelText: 'Select User'),
+            // User selection with checkboxes
+            const Text('Select Users:'),
+            Expanded(
+              child: ListView(
+                shrinkWrap: true,
+                children: widget.joinedUsers.map((user) {
+                  return CheckboxListTile(
+                    title: Text(user['username'] ?? 'Unknown'),
+                    value: _selectedUsers[user['id']],
+                    onChanged: (isSelected) {
+                      setState(() {
+                        _selectedUsers[user['id']] = isSelected ?? false;
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
             ),
+            const SizedBox(height: 10),
+            // Description input
             TextFormField(
               decoration: const InputDecoration(labelText: 'Description'),
               onSaved: (value) => _description = value ?? '',
               validator: (value) =>
                   value == null || value.isEmpty ? 'Enter description' : null,
             ),
+            const SizedBox(height: 10),
+            // Amount input
             TextFormField(
               decoration: const InputDecoration(labelText: 'Amount'),
               keyboardType: TextInputType.number,
@@ -205,8 +214,23 @@ class _AddExpenditureDialogState extends State<AddExpenditureDialog> {
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
+
+              // Filter selected user IDs
+              final selectedUserIds = _selectedUsers.entries
+                  .where((entry) => entry.value)
+                  .map((entry) => entry.key)
+                  .toList();
+
+              if (selectedUserIds.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Please select at least one user.')),
+                );
+                return;
+              }
+
               Navigator.pop(context, {
-                'userId': _selectedUserId,
+                'userIds': selectedUserIds,
                 'description': _description,
                 'amount': _amount,
               });
