@@ -233,9 +233,7 @@ class _TripInfoPageState extends State<TripInfoPage>
                               context,
                               MaterialPageRoute(
                                 builder: (context) => GroupExpendPage(
-                                  joinedUsers: joinedUsers ?? [],
-                                  expenditures: const [],
-                                  tripId: '',
+                                  tripId: widget.tripId!,
                                 ),
                               ),
                             );
