@@ -1,26 +1,55 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class GroupExpendPage extends StatefulWidget {
-  const GroupExpendPage({super.key});
+  final String tripId;
+
+  const GroupExpendPage({
+    Key? key,
+    required this.tripId,
+  }) : super(key: key);
 
   @override
-  _GroupExpendPage createState() => _GroupExpendPage();
+  _GroupExpendPageState createState() => _GroupExpendPageState();
 }
 
-class _GroupExpendPage extends State<GroupExpendPage> {
-  List<dynamic>? joinedUsers;
-  List<Map<String, dynamic>> expenditures = []; // To store expenditures
-  String? tripId;
+class _GroupExpendPageState extends State<GroupExpendPage> {
+  List<dynamic> joinedUsers = [];
+  List<Map<String, dynamic>> expenditures = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchJoinedUsers();
+  }
+
+  Future<void> fetchJoinedUsers() async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'https://www.yasupada.com/mobiletrip/api.php?action=joined_trip_users'),
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode({'trip_id': widget.tripId}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as List<dynamic>;
+        setState(() {
+          joinedUsers = data;
+        });
+      } else {
+        print('Failed to fetch joined users: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching joined users: $e');
+    }
+  }
 
   void addExpenditure() async {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => AddExpenditureDialog(),
+      builder: (context) => const AddExpenditureDialog(),
     );
 
     if (result != null) {
@@ -31,13 +60,13 @@ class _GroupExpendPage extends State<GroupExpendPage> {
   }
 
   double calculateBudgetPerPerson() {
-    if (expenditures.isEmpty || joinedUsers == null || joinedUsers!.isEmpty) {
+    if (expenditures.isEmpty || joinedUsers.isEmpty) {
       return 0;
     }
 
     final totalExpenditure =
         expenditures.fold(0, (sum, item) => sum + (item['amount'] as int));
-    return totalExpenditure / joinedUsers!.length;
+    return totalExpenditure / joinedUsers.length;
   }
 
   @override
@@ -46,56 +75,56 @@ class _GroupExpendPage extends State<GroupExpendPage> {
       appBar: AppBar(
         title: const Text('Group Expenditures'),
       ),
-      body: ListView.builder(
-        itemCount: joinedUsers!.length,
-        itemBuilder: (context, index) {
-          final user = joinedUsers![index];
-          return ListTile(
-            title: Text(user['username'] ?? 'Unknown'),
-            trailing: IconButton(
-              icon: const Icon(Icons.attach_money),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Payment Details for ${user['username']}'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                              'Total Expenditure: \$${user['total_expenditure'] ?? 0}'),
-                          const SizedBox(height: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              // เพิ่มฟังก์ชันสำหรับเพิ่มหรือปรับปรุงรายการจ่ายเงิน
-                              Navigator.pop(context); // ปิด Dialog
-                            },
-                            child: const Text('Add Payment'),
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context); // ปิด Dialog
-                          },
-                          child: const Text('Close'),
-                        ),
-                      ],
-                    );
-                  },
+      body: joinedUsers.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: joinedUsers.length,
+              itemBuilder: (context, index) {
+                final user = joinedUsers[index];
+                return ListTile(
+                  title: Text(user['username'] ?? 'Unknown'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.attach_money),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title:
+                                Text('Payment Details for ${user['username']}'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Total Expenditure: \$${user['total_expenditure'] ?? 0}',
+                                ),
+                                const SizedBox(height: 10),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Add Payment'),
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Close'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
                 );
               },
             ),
-          );
-        },
-      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // เพิ่มฟังก์ชันเพื่อเพิ่มรายการค่าใช้จ่ายใหม่
-          addExpenditure();
-        },
+        onPressed: addExpenditure,
         child: const Icon(Icons.add),
       ),
     );
