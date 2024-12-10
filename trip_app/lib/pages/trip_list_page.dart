@@ -28,6 +28,8 @@ class _TripListPageState extends State<TripListPage> {
   }
 
   Future<void> _fetchTrips() async {
+    final prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString('user_id');
     setState(() {
       isLoading = true; // Show loading indicator while fetching trips
     });
