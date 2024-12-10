@@ -271,21 +271,36 @@ class Trip
     }
 
     // Update Expense for a Trip
-    public function updateExpense($trip_id, $expense_id, $amount, $description)
+    // Update or Add Expense for a Trip
+    public function updateOrAddExpense($trip_id, $expense_id = null, $amount, $description)
     {
-        $query = "UPDATE " . $this->expenses_table . " 
-                  SET amount = :amount, description = :description 
-                  WHERE id = :expense_id AND trip_id = :trip_id";
-        $stmt = $this->conn->prepare($query);
+        if ($expense_id) {
+            // Update existing expense
+            $query = "UPDATE " . $this->expenses_table . " SET amount = :amount, description = :description WHERE id = :expense_id AND trip_id = :trip_id";
+            $stmt = $this->conn->prepare($query);
 
-        $stmt->bindParam(':trip_id', $trip_id);
-        $stmt->bindParam(':expense_id', $expense_id);
-        $stmt->bindParam(':amount', $amount);
-        $stmt->bindParam(':description', $description);
+            $stmt->bindParam(':trip_id', $trip_id);
+            $stmt->bindParam(':expense_id', $expense_id);
+            $stmt->bindParam(':amount', $amount);
+            $stmt->bindParam(':description', $description);
 
-        if ($stmt->execute()) {
-            return true;
+            if ($stmt->execute()) {
+                return ['status' => true, 'message' => 'Expense updated successfully'];
+            }
+            return ['status' => false, 'message' => 'Failed to update expense'];
+        } else {
+            // Add new expense
+            $query = "INSERT INTO " . $this->expenses_table . " (trip_id, amount, description) VALUES (:trip_id, :amount, :description)";
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':trip_id', $trip_id);
+            $stmt->bindParam(':amount', $amount);
+            $stmt->bindParam(':description', $description);
+
+            if ($stmt->execute()) {
+                return ['status' => true, 'message' => 'Expense added successfully'];
+            }
+            return ['status' => false, 'message' => 'Failed to add expense'];
         }
-        return false;
     }
 }

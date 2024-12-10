@@ -312,7 +312,7 @@ switch ($action) {
     $amount = $data['amount'];
     $description = $data['description'];
 
-    if ($trip->updateExpense($trip_id, $expense_id, $amount, $description)) {
+    if ($trip->updateOrAddExpense($trip_id, $expense_id, $amount, $description)) {
       echo json_encode(["message" => "Expense updated successfully."]);
     } else {
       echo json_encode(["message" => "Failed to update expense."]);
