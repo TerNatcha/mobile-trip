@@ -33,8 +33,6 @@ class _GroupExpendPageState extends State<GroupExpendPage> {
         body: jsonEncode({'trip_id': widget.tripId}),
       );
 
-      print(response.body);
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as List<dynamic>;
         setState(() {
@@ -48,27 +46,61 @@ class _GroupExpendPageState extends State<GroupExpendPage> {
     }
   }
 
+  Future<void> addExpenditureForUser(
+      String userId, String description, double amount) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'https://www.yasupada.com/mobiletrip/api.php?action=update_expense'),
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode({
+          'user_id': userId,
+          'trip_id': widget.tripId,
+          'description': description,
+          'amount': amount,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Expenditure added successfully!');
+      } else {
+        print('Failed to add expenditure: ${response.body}');
+      }
+    } catch (e) {
+      print('Error adding expenditure: $e');
+    }
+  }
+
   void addExpenditure() async {
+    if (joinedUsers.isEmpty) {
+      print('No users joined the trip');
+      return;
+    }
+
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => const AddExpenditureDialog(),
+      builder: (context) => AddExpenditureDialog(
+        joinedUsers: joinedUsers,
+      ),
     );
 
     if (result != null) {
       setState(() {
-        expenditures.add(result);
+        final userId = result['userId'] as String;
+        final description = result['description'] as String;
+        final amount = result['amount'] as double;
+
+        // Add to expenditures list
+        expenditures.add({
+          'userId': userId,
+          'description': description,
+          'amount': amount,
+        });
+
+        // Update expenditure in the backend
+        addExpenditureForUser(userId, description, amount);
       });
     }
-  }
-
-  double calculateBudgetPerPerson() {
-    if (expenditures.isEmpty || joinedUsers.isEmpty) {
-      return 0;
-    }
-
-    final totalExpenditure =
-        expenditures.fold(0, (sum, item) => sum + (item['amount'] as int));
-    return totalExpenditure / joinedUsers.length;
   }
 
   @override
@@ -85,43 +117,8 @@ class _GroupExpendPageState extends State<GroupExpendPage> {
                 final user = joinedUsers[index];
                 return ListTile(
                   title: Text(user['username'] ?? 'Unknown'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.attach_money),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title:
-                                Text('Payment Details for ${user['username']}'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Total Expenditure: \$${user['total_expenditure'] ?? 0}',
-                                ),
-                                const SizedBox(height: 10),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Add Payment'),
-                                ),
-                              ],
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Close'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
+                  subtitle: Text(
+                      'Total Expenditure: \$${user['total_expenditure'] ?? 0}'),
                 );
               },
             ),
@@ -134,7 +131,10 @@ class _GroupExpendPageState extends State<GroupExpendPage> {
 }
 
 class AddExpenditureDialog extends StatefulWidget {
-  const AddExpenditureDialog({super.key});
+  final List<dynamic> joinedUsers;
+
+  const AddExpenditureDialog({Key? key, required this.joinedUsers})
+      : super(key: key);
 
   @override
   _AddExpenditureDialogState createState() => _AddExpenditureDialogState();
@@ -142,8 +142,18 @@ class AddExpenditureDialog extends StatefulWidget {
 
 class _AddExpenditureDialogState extends State<AddExpenditureDialog> {
   final _formKey = GlobalKey<FormState>();
+  String _selectedUserId = '';
   String _description = '';
   double _amount = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.joinedUsers.isNotEmpty) {
+      _selectedUserId =
+          widget.joinedUsers[0]['id']; // Default to the first user
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,6 +164,19 @@ class _AddExpenditureDialogState extends State<AddExpenditureDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            DropdownButtonFormField<String>(
+              value: _selectedUserId,
+              items: widget.joinedUsers
+                  .map<DropdownMenuItem<String>>((user) => DropdownMenuItem(
+                        value: user['id'],
+                        child: Text(user['username']),
+                      ))
+                  .toList(),
+              onChanged: (value) => setState(() {
+                _selectedUserId = value!;
+              }),
+              decoration: const InputDecoration(labelText: 'Select User'),
+            ),
             TextFormField(
               decoration: const InputDecoration(labelText: 'Description'),
               onSaved: (value) => _description = value ?? '',
@@ -182,8 +205,11 @@ class _AddExpenditureDialogState extends State<AddExpenditureDialog> {
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
-              Navigator.pop(
-                  context, {'description': _description, 'amount': _amount});
+              Navigator.pop(context, {
+                'userId': _selectedUserId,
+                'description': _description,
+                'amount': _amount,
+              });
             }
           },
           child: const Text('Add'),
