@@ -28,7 +28,7 @@ class _GroupExpendPageState extends State<GroupExpendPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=joined_trip_users'),
+            'http://localhost:3000/api/joined_trip_users'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({'trip_id': widget.tripId}),
       );
@@ -51,7 +51,7 @@ class _GroupExpendPageState extends State<GroupExpendPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=update_expense'),
+            'http://localhost:3000/api/update_expense'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({
           'user_id': userId,

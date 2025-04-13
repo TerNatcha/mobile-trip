@@ -37,7 +37,7 @@ class _TripListPageState extends State<TripListPage> {
     try {
       final response = await http.get(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$userId'),
+            'http://localhost:3000/api/get_trips&user_id=$userId'),
       );
 
       if (response.statusCode == 200) {

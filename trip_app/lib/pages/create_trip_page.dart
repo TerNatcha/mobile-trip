@@ -41,7 +41,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
   Future<void> _loadTripData() async {
     final response = await http.post(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=get_trip&trip_id=${widget.tripId}'),
+          'http://localhost:3000/api/get_trip&trip_id=${widget.tripId}'),
       body: {'trip_id': widget.tripId.toString()},
     );
 
@@ -77,7 +77,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
 
     final action = isEditing ? 'edit_trip' : 'create_trip';
     final response = await http.post(
-      Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=$action'),
+      Uri.parse('http://localhost:3000/api/$action'),
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({
         'trip_id': widget.tripId?.toString() ?? '',
@@ -271,7 +271,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
   Future<void> _deleteTrip() async {
     final response = await http.post(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=delete_trip'),
+          'http://localhost:3000/api/delete_trip'),
       body: {'trip_id': widget.tripId.toString()},
     );
 
@@ -291,7 +291,7 @@ class _CreateTripPageState extends State<CreateTripPage> {
   Future<void> _closeTrip() async {
     final response = await http.post(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=close_trip'),
+          'http://localhost:3000/api/close_trip'),
       body: {'trip_id': widget.tripId.toString()},
     );
 

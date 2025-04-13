@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=login'),
+        Uri.parse('http://localhost:3000/api/login'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({
           'username': username,

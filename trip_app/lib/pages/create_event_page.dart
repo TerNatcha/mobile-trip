@@ -34,7 +34,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   Future<void> _loadEventData() async {
     final response = await http.post(
-      Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=get_event'),
+      Uri.parse('http://localhost:3000/api/get_event'),
       body: {'event_id': widget.eventId.toString()},
     );
 
@@ -56,7 +56,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     if (_formKey.currentState!.validate()) {
       final action = isEditing ? 'update_event' : 'create_event';
       final response = await http.post(
-        Uri.parse('https://www.yasupada.com/mobiletrip/api.php?action=$action'),
+        Uri.parse('http://localhost:3000/api/$action'),
         body: {
           'trip_id': widget.tripId.toString(),
           'event_id': widget.eventId.toString(),
@@ -85,7 +85,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   Future<void> _deleteEvent() async {
     final response = await http.post(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=delete_event'),
+          'http://localhost:3000/api/delete_event'),
       body: {'event_id': widget.eventId.toString()},
     );
 

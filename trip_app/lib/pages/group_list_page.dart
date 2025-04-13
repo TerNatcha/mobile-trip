@@ -24,7 +24,7 @@ class _GroupListPageState extends State<GroupListPage> {
 
   Future<void> _fetchGroupList() async {
     final response = await http.get(Uri.parse(
-        'https://www.yasupada.com/mobiletrip/api.php?action=get_groups&user_id=${widget.userId}'));
+        'http://localhost:3000/api/get_groups&user_id=${widget.userId}'));
     if (response.statusCode == 200) {
       setState(() {
         _groupList = json.decode(response.body);
@@ -103,7 +103,7 @@ class _GroupListPageState extends State<GroupListPage> {
       String groupName, String userId, String description) async {
     final response = await http.post(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=create_group'),
+          'http://localhost:3000/api/create_group'),
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({
         'group_name': groupName,

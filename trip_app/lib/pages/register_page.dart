@@ -30,7 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=register'),
+            'http://localhost:3000/api/register'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({
           'username': username,

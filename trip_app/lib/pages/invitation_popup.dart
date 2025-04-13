@@ -13,7 +13,7 @@ class InvitationPopup extends StatelessWidget {
   Future<void> _handleResponse(BuildContext context, bool accepted) async {
     final response = await http.post(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=respond_invite'),
+          'http://localhost:3000/api/respond_invite'),
       body: {
         'group_id': groupId.toString(),
         'user_id': userId.toString(),

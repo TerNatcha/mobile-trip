@@ -50,7 +50,7 @@ class _MyPersonPageState extends State<MyPersonPage> {
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=update_user'),
+            'http://localhost:3000/api/update_user'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({
           'user_id': _userId,
@@ -77,7 +77,7 @@ class _MyPersonPageState extends State<MyPersonPage> {
       final request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=update_profile_image'),
+            'http://localhost:3000/api/update_profile_image'),
       );
       request.fields['user_id'] = _userId ?? '';
       request.files
@@ -100,7 +100,7 @@ class _MyPersonPageState extends State<MyPersonPage> {
   Future<void> _updateDetailedProfile() async {
     final response = await http.post(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=update_profile_info'),
+          'http://localhost:3000/api/update_profile_info'),
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({
         'user_id': _userId,

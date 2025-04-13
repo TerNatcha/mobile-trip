@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-import 'package:trip_app/pages/trip_info_page.dart';
 import 'package:trip_app/pages/search_user_page.dart';
 
 class ChatRoomPage extends StatefulWidget {
@@ -49,7 +48,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     try {
       final response = await http.post(
         Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=get_messages',
+          'http://localhost:3000/api/get_messages',
         ),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({
@@ -94,7 +93,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
       final response = await http.get(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=get_trips&user_id=$userId'),
+            'http://localhost:3000/api/get_trips&user_id=$userId'),
       );
 
       if (response.statusCode == 200) {
@@ -130,7 +129,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
         final response = await http.post(
           Uri.parse(
-              'https://www.yasupada.com/mobiletrip/api.php?action=send_message'),
+              'http://localhost:3000/api/send_message'),
           headers: {'Content-Type': 'application/json; charset=UTF-8'},
           body: jsonEncode({
             'group_id': widget.groupId,
@@ -163,7 +162,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=join_trip'),
+            'http://localhost:3000/api/join_trip'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({
           'trip_id': tripId,
@@ -229,7 +228,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     // Fetch trip details from the server (e.g., title, start_date, end_date)
     final response = await http.post(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=get_trip&trip_id=$tripId'),
+          'http://localhost:3000/api/get_trip&trip_id=$tripId'),
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({'trip_id': tripId}),
     );

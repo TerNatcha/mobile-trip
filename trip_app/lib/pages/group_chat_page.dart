@@ -24,7 +24,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
   Future<void> _fetchMessages() async {
     final response = await http.get(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=get_messages&group_id=${widget.groupId}'),
+          'http://localhost:3000/api/get_messages&group_id=${widget.groupId}'),
     );
 
     if (response.statusCode == 200) {
@@ -41,7 +41,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
   Future<void> _sendMessage(String message) async {
     final response = await http.post(
       Uri.parse(
-          'https://www.yasupada.com/mobiletrip/api.php?action=send_message'),
+          'http://localhost:3000/api/send_message'),
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode({
         'group_id': widget.groupId,

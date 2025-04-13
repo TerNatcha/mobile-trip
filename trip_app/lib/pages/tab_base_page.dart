@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'calendar_page.dart';
 import 'group_list_page.dart';
 import 'my_person_page.dart';
-import 'trip_info_page.dart';
 import 'trip_list_page.dart';
 
 class TabBasePage extends StatefulWidget {

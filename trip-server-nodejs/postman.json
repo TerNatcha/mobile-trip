@@ -1,0 +1,762 @@
+{
+    "info": {
+      "_postman_id": "your-postman-id",
+      "name": "Travel API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Register User",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/user/register",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "user",
+              "register"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Login User",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/user/login",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "user",
+              "login"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Create Trip",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"user_id\": 1,\n  \"name\": \"Summer Vacation\",\n  \"destination\": \"Maldives\",\n  \"start_date\": \"2023-10-01\",\n  \"end_date\": \"2023-10-10\",\n  \"latitude\": 4.2105,\n  \"longitude\": 73.5087\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip/create_trip",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip",
+              "create_trip"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Get Trips",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:3000/api/trip/get_trips?user_id=1",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip",
+              "get_trips"
+            ],
+            "query": [
+              {
+                "key": "user_id",
+                "value": "1"
+              }
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Get Trip",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:3000/api/trip/get_trip?trip_id=1",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip",
+              "get_trip"
+            ],
+            "query": [
+              {
+                "key": "trip_id",
+                "value": "1"
+              }
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Edit Trip",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"trip_id\": 1,\n  \"name\": \"Updated Summer Vacation\",\n  \"destination\": \"Maldives\",\n  \"start_date\": \"2023-10-01\",\n  \"end_date\": \"2023-10-10\",\n  \"latitude\": 4.2105,\n  \"longitude\": 73.5087\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip/edit_trip",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip",
+              "edit_trip"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Delete Trip",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"trip_id\": 1\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip/delete_trip",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip",
+              "delete_trip"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Close Trip",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"trip_id\": 1\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip/close_trip",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip",
+              "close_trip"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Join Trip",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"trip_id\": 1,\n  \"user_id\": 2,\n  \"start_date\": \"2023-10-01\",\n  \"end_date\": \"2023-10-10\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip/join_trip",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip",
+              "join_trip"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Joined Trip Users",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"trip_id\": 1\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip/joined_trip_users",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip",
+              "joined_trip_users"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Unjoin Trip",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"trip_id\": 1,\n  \"user_id\": 2\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip/unjoin_trip",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip",
+              "unjoin_trip"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Create Event",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"trip_id\": 1,\n  \"event_name\": \"Beach Party\",\n  \"description\": \"Fun beach party with friends\",\n  \"event_date\": \"2023-10-05\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip_event/create_event",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip_event",
+              "create_event"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Update Event",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"event_id\": 1,\n  \"event_name\": \"Updated Beach Party\",\n  \"description\": \"Fun beach party with friends\",\n  \"event_date\": \"2023-10-05\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip_event/update_event",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip_event",
+              "update_event"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Delete Event",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"event_id\": 1\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip_event/delete_event",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip_event",
+              "delete_event"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Update Expense",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"trip_id\": 1,\n  \"expense_id\": 1,\n  \"amount\": 100.00,\n  \"description\": \"Dinner at Beachside Restaurant\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/trip/update_expense",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "trip",
+              "update_expense"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Update User Profile",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"user_id\": 1,\n  \"username\": \"updateduser\",\n  \"email\": \"updateduser@example.com\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/user/update_user",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "user",
+              "update_user"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Update Profile Image",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ],
+          "body": {
+            "mode": "formdata",
+            "formdata": [
+              {
+                "key": "user_id",
+                "value": "1",
+                "type": "text"
+              },
+              {
+                "key": "image",
+                "type": "file",
+                "src": "path/to/your/image.jpg"
+              }
+            ]
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/user/update_profile_image",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "user",
+              "update_profile_image"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Update Profile Info",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"user_id\": 1,\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"phone\": \"1234567890\",\n  \"address\": \"123 Main St\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/user/update_profile_info",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "user",
+              "update_profile_info"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Respond to Invite",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"group_id\": 1,\n  \"user_id\": 2,\n  \"accepted\": \"true\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/user/respond_invite",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "user",
+              "respond_invite"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Invite User to Group",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"group_id\": 1,\n  \"user_id\": 2\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/group/invite_user",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "group",
+              "invite_user"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Remove User from Group",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"group_id\": 1,\n  \"user_id\": 2\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/group/remove_user_from_group",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "group",
+              "remove_user_from_group"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Create Group",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"user_id\": 1,\n  \"group_name\": \"Adventure Club\",\n  \"description\": \"A group for adventure enthusiasts\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/group/create_group",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "group",
+              "create_group"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Get Groups",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:3000/api/group/get_groups?user_id=1",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "group",
+              "get_groups"
+            ],
+            "query": [
+              {
+                "key": "user_id",
+                "value": "1"
+              }
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Search Users",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:3000/api/group/search_users?query=john",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "group",
+              "search_users"
+            ],
+            "query": [
+              {
+                "key": "query",
+                "value": "john"
+              }
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Send Message",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"group_id\": 1,\n  \"user_id\": 1,\n  \"message\": \"Hello, everyone!\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/message/send_message",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "message",
+              "send_message"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Get Messages",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"group_id\": 1\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/api/message/get_messages",
+            "host": [
+              "localhost"
+            ],
+            "port": "3000",
+            "path": [
+              "api",
+              "message",
+              "get_messages"
+            ]
+          }
+        },
+        "response": []
+      }
+    ]
+  }

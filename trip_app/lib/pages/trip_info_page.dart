@@ -39,7 +39,7 @@ class _TripInfoPageState extends State<TripInfoPage>
     try {
       final response = await http.post(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=get_trip&trip_id=${widget.tripId}'),
+            'http://localhost:3000/api/get_trip&trip_id=${widget.tripId}'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({'trip_id': widget.tripId}),
       );
@@ -79,7 +79,7 @@ class _TripInfoPageState extends State<TripInfoPage>
     try {
       final response = await http.post(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=joined_trip_users&trip_id=${widget.tripId}'),
+            'http://localhost:3000/api/joined_trip_users&trip_id=${widget.tripId}'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({'trip_id': widget.tripId}),
       );
@@ -101,7 +101,7 @@ class _TripInfoPageState extends State<TripInfoPage>
     try {
       final response = await http.post(
         Uri.parse(
-            'https://www.yasupada.com/mobiletrip/api.php?action=delete_trip'),
+            'http://localhost:3000/api/delete_trip'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({'trip_id': widget.tripId}),
       );
